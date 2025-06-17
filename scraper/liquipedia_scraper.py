@@ -1,7 +1,33 @@
+import os
+import json
+import time
 import requests
 from bs4 import BeautifulSoup
 
-def fetch_tournaments(game_slug):
+CACHE_DIR = "cache"
+CACHE_DURATION = 10 * 60  # 10 دقائق
+
+def fetch_tournaments(game_slug, force=False):
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    cache_path = os.path.join(CACHE_DIR, f"{game_slug}_tournaments.json")
+
+    # استخدم الكاش إذا لم يكن هناك طلب إجباري (force)
+    if not force and os.path.exists(cache_path):
+        last_modified = os.path.getmtime(cache_path)
+        if time.time() - last_modified < CACHE_DURATION:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+
+    # جلب جديد من الموقع
+    data = scrape_from_liquipedia(game_slug)
+
+    # تخزين في الكاش
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    return data
+
+def scrape_from_liquipedia(game_slug):
     url = f"https://liquipedia.net/{game_slug}/Main_Page"
     headers = {'User-Agent': 'Mozilla/5.0'}
 
