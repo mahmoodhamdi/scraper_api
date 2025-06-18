@@ -15,7 +15,7 @@ def get_tournaments():
 
     if not game_slug:
         return jsonify({"error": "Missing 'game' in request body"}), 400
-
+ 
     result = fetch_tournaments(game_slug, force=force)
     return jsonify(result)
 
