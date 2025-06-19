@@ -1,0 +1,878 @@
+{
+  "upcoming": {
+    "EPL World AM S17": [
+      {
+        "team1": "INF",
+        "team2": "EB",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 19, 2025 - 16:00 PET"
+      },
+      {
+        "team1": "Veritas",
+        "team2": "EB",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 13:00 PET"
+      },
+      {
+        "team1": "INF",
+        "team2": "AllStars",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 16:00 PET"
+      },
+      {
+        "team1": "EB",
+        "team2": "Den",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 13:00 PET"
+      },
+      {
+        "team1": "TSC",
+        "team2": "AllStars",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 16:00 PET"
+      },
+      {
+        "team1": "Den",
+        "team2": "Veritas",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 13:00 PET"
+      },
+      {
+        "team1": "EB",
+        "team2": "TSC",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 16:00 PET"
+      },
+      {
+        "team1": "Den",
+        "team2": "INF",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 13:00 PET"
+      },
+      {
+        "team1": "Veritas",
+        "team2": "TSC",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 16:00 PET"
+      }
+    ],
+    "EPL World SEA S6": [
+      {
+        "team1": "Carst",
+        "team2": "C911",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 11:00 SGT"
+      },
+      {
+        "team1": "TFG",
+        "team2": "YG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 14:00 SGT"
+      },
+      {
+        "team1": "Ivory",
+        "team2": "IAP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 17:00 SGT"
+      },
+      {
+        "team1": "Ivory",
+        "team2": "Grey",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 11:00 SGT"
+      },
+      {
+        "team1": "IAP",
+        "team2": "YG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 14:00 SGT"
+      },
+      {
+        "team1": "Carst",
+        "team2": "Grey",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 11:00 SGT"
+      },
+      {
+        "team1": "Ivory",
+        "team2": "Cast",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 14:00 SGT"
+      },
+      {
+        "team1": "IAP",
+        "team2": "Carst",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 11:00 SGT"
+      },
+      {
+        "team1": "Cast",
+        "team2": "Grey",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 14:00 SGT"
+      },
+      {
+        "team1": "TFG",
+        "team2": "Cast",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 24, 2025 - 11:00 SGT"
+      },
+      {
+        "team1": "YG",
+        "team2": "Carst",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 24, 2025 - 14:00 SGT"
+      }
+    ],
+    "EPL Season 27": [
+      {
+        "team1": "Lynx",
+        "team2": "Hryvnia",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 11:00 CEST"
+      },
+      {
+        "team1": "QTM",
+        "team2": "Runa",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 14:00 CEST"
+      },
+      {
+        "team1": "LVLUP",
+        "team2": "YeS",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 20, 2025 - 17:00 CEST"
+      },
+      {
+        "team1": "Hryvnia",
+        "team2": "QTM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 20:00 CEST"
+      },
+      {
+        "team1": "Hryvnia",
+        "team2": "Kalm",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 20:00 CEST"
+      },
+      {
+        "team1": "Lynx",
+        "team2": "Runa",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 20:00 CEST"
+      }
+    ],
+    "PGL Wallachia S5": [
+      {
+        "team1": "AGG",
+        "team2": "VP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 10:00 EEST"
+      },
+      {
+        "team1": "GG",
+        "team2": "AVULUS",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 10:00 EEST"
+      },
+      {
+        "team1": "Tundra",
+        "team2": "XG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 13:00 EEST"
+      },
+      {
+        "team1": "Aurora",
+        "team2": "OG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 13:00 EEST"
+      },
+      {
+        "team1": "Liquid",
+        "team2": "HEROIC",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 16:00 EEST"
+      },
+      {
+        "team1": "BB",
+        "team2": "Edge",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 16:00 EEST"
+      },
+      {
+        "team1": "TSpirit",
+        "team2": "Wildcard",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 19:00 EEST"
+      },
+      {
+        "team1": "NGX",
+        "team2": "NAVI",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 21, 2025 - 19:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 10:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 10:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 13:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 13:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 16:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 16:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 19:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 22, 2025 - 19:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 10:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 10:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 13:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 13:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 16:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 16:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 19:00 EEST"
+      },
+      {
+        "team1": "N/A",
+        "team2": "N/A",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 23, 2025 - 19:00 EEST"
+      }
+    ]
+  },
+  "completed": {
+    "EPL World AM S17": [
+      {
+        "team1": "Den",
+        "team2": "AllStars",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 19, 2025 - 13:00 PET",
+        "result": "2:::0"
+      },
+      {
+        "team1": "AllStars",
+        "team2": "EB",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 18, 2025 - 16:25 PET",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Veritas",
+        "team2": "INF",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 18, 2025 - 13:00 PET",
+        "result": "2:::1"
+      }
+    ],
+    "EPL Season 27": [
+      {
+        "team1": "Lynx",
+        "team2": "QTM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 19, 2025 - 17:00 CEST",
+        "result": "2:::0"
+      },
+      {
+        "team1": "Hryvnia",
+        "team2": "Runa",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 19, 2025 - 14:00 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "eSpoiled",
+        "team2": "LVLUP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 18, 2025 - 17:00 CEST",
+        "result": "0:::2"
+      }
+    ],
+    "EPL World SEA S6": [
+      {
+        "team1": "Grey",
+        "team2": "IAP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 19, 2025 - 14:25 SGT",
+        "result": "2:::1"
+      },
+      {
+        "team1": "YG",
+        "team2": "Ivory",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 19, 2025 - 11:00 SGT",
+        "result": "1:::2"
+      }
+    ],
+    "CCT S2 Series 1": [
+      {
+        "team1": "Runa",
+        "team2": "Z10",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo5",
+        "time": "June 18, 2025 - 13:00 CEST",
+        "result": "3:::0"
+      },
+      {
+        "team1": "Z10",
+        "team2": "Wildcard",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 17, 2025 - 18:00 CEST",
+        "result": "2:::1"
+      },
+      {
+        "team1": "QTM",
+        "team2": "Wildcard",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 17, 2025 - 15:00 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "Z10",
+        "team2": "Runa",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 19:00 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "Wildcard",
+        "team2": "Move",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 16:45 CEST",
+        "result": "2:::0"
+      },
+      {
+        "team1": "TNL",
+        "team2": "QTM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 13:00 CEST",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Wildcard",
+        "team2": "Z10",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 19:30 CEST",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Runa",
+        "team2": "TNL",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 16:00 CEST",
+        "result": "2:::1"
+      },
+      {
+        "team1": "Passion",
+        "team2": "QTM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 13:00 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "Move",
+        "team2": "VP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "-",
+        "time": "June 15, 2025 - 10:00 CEST",
+        "result": "W:::FF"
+      },
+      {
+        "team1": "Move",
+        "team2": "Runa",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 19:30 CEST",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Wildcard",
+        "team2": "Passion",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 17:10 CEST",
+        "result": "2:::0"
+      },
+      {
+        "team1": "Z10",
+        "team2": "QTM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 13:00 CEST",
+        "result": "2:::1"
+      },
+      {
+        "team1": "VP",
+        "team2": "TNL",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "-",
+        "time": "June 14, 2025 - 10:00 CEST",
+        "result": "FF:::W"
+      }
+    ],
+    "TI2025 WEU CQ": [
+      {
+        "team1": "OG",
+        "team2": "NGX",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 17, 2025 - 18:00 CEST",
+        "result": "1:::2"
+      },
+      {
+        "team1": "NGX",
+        "team2": "YeS",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 17, 2025 - 14:00 CEST",
+        "result": "2:::1"
+      },
+      {
+        "team1": "NAVI Jr.",
+        "team2": "OG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 18:30 CEST",
+        "result": "2:::1"
+      },
+      {
+        "team1": "4Pirates",
+        "team2": "NGX",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 16:20 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "1w",
+        "team2": "YeS",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 14:00 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "OG",
+        "team2": "4Pirates",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 19:30 CEST",
+        "result": "2:::0"
+      },
+      {
+        "team1": "1w",
+        "team2": "NAVI Jr.",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 16:00 CEST",
+        "result": "1:::2"
+      },
+      {
+        "team1": "AVULUS",
+        "team2": "YeS",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 13:30 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "NGX",
+        "team2": "VP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 11:00 CEST",
+        "result": "2:::0"
+      },
+      {
+        "team1": "AVULUS",
+        "team2": "4Pirates",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 19:25 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "NGX",
+        "team2": "NAVI Jr.",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 16:00 CEST",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Secret",
+        "team2": "YeS",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 13:10 CEST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "MOUZ",
+        "team2": "VP",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 11:00 CEST",
+        "result": "0:::2"
+      }
+    ],
+    "TI2025 SEA CQ": [
+      {
+        "team1": "Talon",
+        "team2": "BOOM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 17, 2025 - 17:15 SGT",
+        "result": "1:::2"
+      },
+      {
+        "team1": "XctN",
+        "team2": "BOOM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 17, 2025 - 13:00 SGT",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Talon",
+        "team2": "Nem",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 16:30 SGT",
+        "result": "1:::2"
+      },
+      {
+        "team1": "XctN",
+        "team2": "TFG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 14:30 SGT",
+        "result": "2:::0"
+      },
+      {
+        "team1": "Ivory",
+        "team2": "BOOM",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 16, 2025 - 12:00 SGT",
+        "result": "0:::2"
+      },
+      {
+        "team1": "XctN",
+        "team2": "Nem",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 17:50 SGT",
+        "result": "0:::2"
+      },
+      {
+        "team1": "Ivory",
+        "team2": "Talon",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 15:45 SGT",
+        "result": "0:::2"
+      },
+      {
+        "team1": "BOOM",
+        "team2": "Cast",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 12:20 SGT",
+        "result": "2:::1"
+      },
+      {
+        "team1": "Kopite",
+        "team2": "TFG",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo2",
+        "time": "June 15, 2025 - 10:00 SGT",
+        "result": "0:::2"
+      },
+      {
+        "team1": "BOOM",
+        "team2": "Nem",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 19:40 SGT",
+        "result": "1:::2"
+      },
+      {
+        "team1": "Talon",
+        "team2": "Kopite",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 16:45 SGT",
+        "result": "2:::1"
+      }
+    ],
+    "Immortal Cup S1": [
+      {
+        "team1": "太阳黑子",
+        "team2": "四带二",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo5",
+        "time": "June 15, 2025 - 17:00 CST",
+        "result": "0:::3"
+      },
+      {
+        "team1": "四带二",
+        "team2": "高祖望龙",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 15, 2025 - 13:00 CST",
+        "result": "2:::0"
+      },
+      {
+        "team1": "南天门",
+        "team2": "高祖望龙",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 18:30 CST",
+        "result": "0:::2"
+      },
+      {
+        "team1": "四带二",
+        "team2": "太阳黑子",
+        "rating1": "-",
+        "rating2": "-",
+        "format": "Bo3",
+        "time": "June 14, 2025 - 14:30 CST",
+        "result": "0:::2"
+      }
+    ]
+  }
+}

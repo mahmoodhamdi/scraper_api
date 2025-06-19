@@ -1,0 +1,416 @@
+{
+  "Upcoming": [
+    {
+      "name": "IESF EEC 2025",
+      "date": "Jul 09 - 13",
+      "link": "https://liquipedia.net/dota2/IESF_World_Championship/2025/Europe",
+      "tier": "2 Nation",
+      "logo": "https://liquipedia.net/commons/images/thumb/2/21/IESF_European_Esports_Championship_2025_icon_allmode.png/50px-IESF_European_Esports_Championship_2025_icon_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025",
+      "date": "Jul 08 - 19",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025",
+      "tier": "Unknown Tier 1",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "RESF Championship",
+      "date": "Jul 03 - 07",
+      "link": "https://liquipedia.net/dota2/Russian_Esports_Championship/2025",
+      "tier": "Unknown Tier 3",
+      "logo": "https://liquipedia.net/commons/images/thumb/9/99/Russian_Esports_Championship_2024_icon_allmode.png/50px-Russian_Esports_Championship_2024_icon_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "FISSURE Universe 5",
+      "date": "Jun 30 - Jul 03",
+      "link": "https://liquipedia.net/dota2/FISSURE/Universe/5",
+      "tier": "Unknown Tier 2",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6f/FISSURE_Universe_Episode_5_allmode.png/50px-FISSURE_Universe_Episode_5_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "PGL Wallachia S5",
+      "date": "Jun 21 - 29",
+      "link": "https://liquipedia.net/dota2/PGL/Wallachia/5",
+      "tier": "Unknown Tier 1",
+      "logo": "https://liquipedia.net/commons/images/thumb/0/0c/PGL_Wallachia_icon_allmode.png/43px-PGL_Wallachia_icon_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "GLO Novokuznetsk",
+      "date": "Jun 21",
+      "link": "https://liquipedia.net/dota2/GLO/Novokuznetsk/2025",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/a/ad/GoodLine_Open_2024_icon_allmode.png/41px-GoodLine_Open_2024_icon_allmode.png",
+      "game_icon": null
+    }
+  ],
+  "Ongoing": [
+    {
+      "name": "EPL World SEA S6",
+      "date": "Jun 19 - Jul 07",
+      "link": "https://liquipedia.net/dota2/EPL/World_Series/Southeast_Asia/6",
+      "tier": "Unknown Tier 3",
+      "logo": "https://liquipedia.net/commons/images/thumb/c/c6/European_Pro_League_2023_icon_lightmode.png/50px-European_Pro_League_2023_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EPL Season 27",
+      "date": "Jun 18 - Jul 07",
+      "link": "https://liquipedia.net/dota2/European_Pro_League/27",
+      "tier": "Unknown Tier 3",
+      "logo": "https://liquipedia.net/commons/images/thumb/c/c6/European_Pro_League_2023_icon_lightmode.png/50px-European_Pro_League_2023_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EPL World AM S17",
+      "date": "Jun 18 - 29",
+      "link": "https://liquipedia.net/dota2/EPL/World_Series/America/17",
+      "tier": "Unknown Tier 3",
+      "logo": "https://liquipedia.net/commons/images/thumb/c/c6/European_Pro_League_2023_icon_lightmode.png/50px-European_Pro_League_2023_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "Cyber Clash",
+      "date": "May 27 - Jun 29",
+      "link": "https://liquipedia.net/dota2/Cyber_Clash",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/c/c1/Cyber_Clash_lightmode.png/50px-Cyber_Clash_lightmode.png",
+      "game_icon": null
+    }
+  ],
+  "Completed": [
+    {
+      "name": "CCT S2 Series 1",
+      "date": "Jun 09 - 18",
+      "link": "https://liquipedia.net/dota2/CCT/Season_2/Europe/1",
+      "tier": "Unknown Tier 3",
+      "logo": "https://liquipedia.net/commons/images/thumb/f/f0/CCT_Dota2_Season_2_Series_allmode.png/35px-CCT_Dota2_Season_2_Series_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 SEA CQ",
+      "date": "Jun 13 - 17",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Southeast_Asia",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 WEU CQ",
+      "date": "Jun 13 - 17",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Western_Europe",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "NSEL 2025",
+      "date": "Jun 14 - 15",
+      "link": "https://liquipedia.net/dota2/Russian_Esports_Federation/National_Student_Esports_League/2025",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/2/2d/National_Student_Esports_League_icon_lightmode.png/34px-National_Student_Esports_League_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "Immortal Cup S1",
+      "date": "May 12 - Jun 15",
+      "link": "https://liquipedia.net/dota2/Immortal_Cup/Season_1",
+      "tier": "Unknown Tier 3",
+      "logo": "https://liquipedia.net/commons/images/thumb/7/7d/Dota2_Immortal_Cup_icon_lightmode.png/45px-Dota2_Immortal_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "Betera Esports League",
+      "date": "Jun 14",
+      "link": "https://liquipedia.net/dota2/Betera_Esports_League",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/e4/Betera_Esports_Dota_League_allmode.png/41px-Betera_Esports_Dota_League_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 EEU CQ",
+      "date": "Jun 11 - 13",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/Eastern_Europe",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 SA CQ",
+      "date": "Jun 11 - 13",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/South_America",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "LatAm Fem League",
+      "date": "May 29 - Jun 13",
+      "link": "https://liquipedia.net/dota2/LatAm_Fem_League/1",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/c/c2/LatAm_Fem_League_allmode.png/33px-LatAm_Fem_League_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 CN CQ",
+      "date": "Jun 09 - 12",
+      "link": "https://liquipedia.net/dota2/The_International/2025/China",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 NA CQ",
+      "date": "Jun 09 - 12",
+      "link": "https://liquipedia.net/dota2/The_International/2025/North_America",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 MESWA CQ",
+      "date": "Jun 08 - 10",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/MESWA",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 SEA CQ",
+      "date": "Jun 08 - 10",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/Southeast_Asia",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 EEU CQ",
+      "date": "Jun 04 - 08",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Eastern_Europe",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 SA CQ",
+      "date": "Jun 04 - 08",
+      "link": "https://liquipedia.net/dota2/The_International/2025/South_America",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "BB Streamers Battle 10",
+      "date": "May 29 - Jun 08",
+      "link": "https://liquipedia.net/dota2/BetBoom_Streamers_Battle/10",
+      "tier": "3 Showm.",
+      "logo": "https://liquipedia.net/commons/images/thumb/d/d6/BetBoom_Streamers_Battle_10_allmode.png/45px-BetBoom_Streamers_Battle_10_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "2nd SHOGA Cup",
+      "date": "May 17 - Jun 08",
+      "link": "https://liquipedia.net/dota2/Shanghai_Online_Game_Association_Cup/2",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/5/56/Shanghai_Online_Game_Association_lightmode.png/50px-Shanghai_Online_Game_Association_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 NA CQ",
+      "date": "Jun 05 - 07",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/North_America",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 WEU CQ",
+      "date": "Jun 05 - 07",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/Western_Europe",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "Betera Esports League Qual",
+      "date": "Jun 02 - 06",
+      "link": "https://liquipedia.net/dota2/Betera_Esports_League/Qualifier",
+      "tier": "4 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/e4/Betera_Esports_Dota_League_allmode.png/41px-Betera_Esports_Dota_League_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 CN OQ#2",
+      "date": "Jun 04 - 05",
+      "link": "https://liquipedia.net/dota2/The_International/2025/China/Open_Qualifier_2",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 EEU OQ",
+      "date": "Jun 03 - 04",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/Eastern_Europe/Open_Qualifier",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 MESWA OQ",
+      "date": "Jun 03 - 04",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/MESWA/Open_Qualifier",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 NA OQ",
+      "date": "Jun 03 - 04",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/North_America/Open_Qualifier",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 SA OQ",
+      "date": "Jun 03 - 04",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/South_America/Open_Qualifier",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 SEA OQ",
+      "date": "Jun 03 - 04",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/Southeast_Asia/Open_Qualifier",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "EWC 2025 WEU OQ",
+      "date": "Jun 03 - 04",
+      "link": "https://liquipedia.net/dota2/Esports_World_Cup/2025/Western_Europe/Open_Qualifier",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/eb/Esports_World_Cup_icon_lightmode.png/50px-Esports_World_Cup_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 CN OQ#1",
+      "date": "Jun 02 - 03",
+      "link": "https://liquipedia.net/dota2/The_International/2025/China/Open_Qualifier_1",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 EEU OQ#2",
+      "date": "Jun 02 - 03",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Eastern_Europe/Open_Qualifier_2",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 NA OQ#2",
+      "date": "Jun 02 - 03",
+      "link": "https://liquipedia.net/dota2/The_International/2025/North_America/Open_Qualifier_2",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 SA OQ#2",
+      "date": "Jun 02 - 03",
+      "link": "https://liquipedia.net/dota2/The_International/2025/South_America/Open_Qualifier_2",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 SEA OQ#2",
+      "date": "Jun 02 - 03",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Southeast_Asia/Open_Qualifier_2",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 WEU OQ#2",
+      "date": "Jun 02 - 03",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Western_Europe/Open_Qualifier_2",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 EEU OQ#1",
+      "date": "May 31 - Jun 01",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Eastern_Europe/Open_Qualifier_1",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 NA OQ#1",
+      "date": "May 31 - Jun 01",
+      "link": "https://liquipedia.net/dota2/The_International/2025/North_America/Open_Qualifier_1",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 SA OQ#1",
+      "date": "May 31 - Jun 01",
+      "link": "https://liquipedia.net/dota2/The_International/2025/South_America/Open_Qualifier_1",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 SEA OQ#1",
+      "date": "May 31 - Jun 01",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Southeast_Asia/Open_Qualifier_1",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "TI2025 WEU OQ#1",
+      "date": "May 31 - Jun 01",
+      "link": "https://liquipedia.net/dota2/The_International/2025/Western_Europe/Open_Qualifier_1",
+      "tier": "1 Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/6/6e/The_International_2025_aegis_allmode.png/50px-The_International_2025_aegis_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "DreamLeague S26",
+      "date": "May 19 - Jun 01",
+      "link": "https://liquipedia.net/dota2/DreamLeague/Season_26",
+      "tier": "Unknown Tier 1",
+      "logo": "https://liquipedia.net/commons/images/thumb/2/2f/DreamLeague_2023_icon_lightmode.png/50px-DreamLeague_2023_icon_lightmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "PWCL 2025",
+      "date": "May 03 - Jun 01",
+      "link": "https://liquipedia.net/dota2/Perfect_World/College_League/2025",
+      "tier": "Unknown Tier 4",
+      "logo": "https://liquipedia.net/commons/images/thumb/3/34/Perfect_World_allmode.png/50px-Perfect_World_allmode.png",
+      "game_icon": null
+    },
+    {
+      "name": "Team-Fight vs. Cancer",
+      "date": "May 31",
+      "link": "https://liquipedia.net/dota2/Team-Fight_Against_Cancer/4",
+      "tier": "4 Showm.",
+      "logo": "https://liquipedia.net/commons/images/thumb/9/94/Team-Fight_Against_Cancer_allmode.png/50px-Team-Fight_Against_Cancer_allmode.png",
+      "game_icon": null
+    }
+  ]
+}

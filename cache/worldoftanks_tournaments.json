@@ -1,0 +1,168 @@
+{
+  "Upcoming": [
+    {
+      "name": "BB CH - Div 1 - Relegation",
+      "date": "Jul 19 - 20",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Division_1/Split_2/Relegation",
+      "tier": "A Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "BB CH - Div 2 - Relegation",
+      "date": "Jul 17 - 18",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Division_2/Split_2/Relegation",
+      "tier": "B Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "BB CH - Split Finals",
+      "date": "Jul 12 - 13",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Split_2/Finals",
+      "tier": "Unknown A-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "WICI 2025",
+      "date": "Jul 04 - 06",
+      "link": "https://liquipedia.net/worldoftanks/Intercontinental_Invitational/2025",
+      "tier": "Unknown A-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/e/e0/WICI_INTERCONTINENTAL_2025_lightmode.png/50px-WICI_INTERCONTINENTAL_2025_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "BB CH - Split Finals Quali",
+      "date": "Jun 20 - 29",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Split_2/Finals/Closed_Qualification",
+      "tier": "A Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    }
+  ],
+  "Ongoing": [
+    {
+      "name": "15v15 Summer Series",
+      "date": "Jun 10 - 29",
+      "link": "https://liquipedia.net/worldoftanks/15v15_Summer_Series/2025",
+      "tier": "Unknown A-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/b/b7/WoT_NA_Summer_Series_allmode.png/50px-WoT_NA_Summer_Series_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "Joust Summer League",
+      "date": "Jun 05 - 22",
+      "link": "https://liquipedia.net/worldoftanks/Joust_League/2025/Summer",
+      "tier": "Unknown B-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/1/1f/WoT_Svitman_Events_allmode.png/50px-WoT_Svitman_Events_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "SAPPIAMO New Talents",
+      "date": "Jun 18 - 19",
+      "link": "https://liquipedia.net/worldoftanks/SAPPIAMO_New_Talents_Tournament",
+      "tier": "Unknown C-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/80/SAPPIAMO_allmode.png/37px-SAPPIAMO_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    }
+  ],
+  "Completed": [
+    {
+      "name": "WCL 2025 Summer Split Relegation",
+      "date": "Jun 15",
+      "link": "https://liquipedia.net/worldoftanks/WCL/2025/Summer/Relegation",
+      "tier": "A Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/3/39/WCL_2025_allmode.png/45px-WCL_2025_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "WCL 2025 Summer Split",
+      "date": "May 09 - Jun 15",
+      "link": "https://liquipedia.net/worldoftanks/WCL/2025/Summer",
+      "tier": "Unknown A-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/3/39/WCL_2025_allmode.png/45px-WCL_2025_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "BB CH - Div 1 - Split 2",
+      "date": "Apr 19 - Jun 15",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Division_1/Split_2",
+      "tier": "Unknown A-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "WCR 2025 Summer Split",
+      "date": "Jun 13 - 14",
+      "link": "https://liquipedia.net/worldoftanks/WCR/2025/Summer",
+      "tier": "Unknown B-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/2/25/WoT_WCR_allmode.png/45px-WoT_WCR_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "BB CH - Div 2 - Split 2",
+      "date": "Apr 17 - Jun 14",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Division_2/Split_2",
+      "tier": "Unknown B-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "BB CH - Div 3 - Split 2",
+      "date": "Apr 15 - Jun 13",
+      "link": "https://liquipedia.net/worldoftanks/Battle_of_Champions/Season_1/Division_3/Split_2",
+      "tier": "Unknown C-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/8/89/BBCH_lightmode.png/50px-BBCH_lightmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "Belarus Cup",
+      "date": "Jun 10",
+      "link": "https://liquipedia.net/worldoftanks/Belarus_Cup",
+      "tier": "Unknown B-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/7/75/Belarus_Cup_allmode.png/35px-Belarus_Cup_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    },
+    {
+      "name": "WCR 2025 Summer Split - Q4",
+      "date": "Jun 07 - 08",
+      "link": "https://liquipedia.net/worldoftanks/WCR/2025/Summer/Qualifier_4",
+      "tier": "B Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/2/25/WoT_WCR_allmode.png/45px-WoT_WCR_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "15v15 Summer Series - Q2",
+      "date": "Jun 07",
+      "link": "https://liquipedia.net/worldoftanks/15v15_Summer_Series/2025/Qualifier_II",
+      "tier": "B Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/b/b7/WoT_NA_Summer_Series_allmode.png/50px-WoT_NA_Summer_Series_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "15v15 Summer Series - Q1",
+      "date": "Jun 06",
+      "link": "https://liquipedia.net/worldoftanks/15v15_Summer_Series/2025/Qualifier_I",
+      "tier": "B Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/b/b7/WoT_NA_Summer_Series_allmode.png/50px-WoT_NA_Summer_Series_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "Joust Summer League - Q2",
+      "date": "Jun 01",
+      "link": "https://liquipedia.net/worldoftanks/Joust_League/2025/Summer/Qualifier_II",
+      "tier": "B Qual.",
+      "logo": "https://liquipedia.net/commons/images/thumb/1/1f/WoT_Svitman_Events_allmode.png/50px-WoT_Svitman_Events_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/d/d1/World_of_Tanks_default_lightmode.png/50px-World_of_Tanks_default_lightmode.png"
+    },
+    {
+      "name": "Border of Times",
+      "date": "May 31 - Jun 01",
+      "link": "https://liquipedia.net/worldoftanks/Border_of_Times/2025",
+      "tier": "Unknown C-Tier",
+      "logo": "https://liquipedia.net/commons/images/thumb/b/b6/Border_of_Times_allmode.png/50px-Border_of_Times_allmode.png",
+      "game_icon": "https://liquipedia.net/commons/images/thumb/2/2b/Mir_Tankov_default_lightmode.png/50px-Mir_Tankov_default_lightmode.png"
+    }
+  ]
+}

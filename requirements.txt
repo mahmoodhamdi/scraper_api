@@ -1,3 +1,4 @@
-flask
+flask 
 requests
-beautifulsoup4
+beautifulsoup4 
+flasgger
