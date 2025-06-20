@@ -13,6 +13,7 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from scraper.liquipedia_scraper import fetch_tournaments, get_matches_by_status
 from collections import defaultdict
+from datetime import datetime as dt
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -772,10 +773,12 @@ def setup_routes(app):
                     score_tag = match.select_one('.brkts-matchlist-score')
                     score = score_tag.text.strip() if score_tag else "N/A"
 
-                    # Extract date from MatchTime (e.g., "July 8, 2025" from "July 8, 2025 - 12:00 AST")
+                    # Extract date from MatchTime and reformat to YYYY-MM-DD
                     try:
-                        match_date = ' '.join(match_time.split(' - ')[0].split()[:3])
-                    except IndexError:
+                        date_str = ' '.join(match_time.split(' - ')[0].split()[:3])
+                        parsed_date = dt.strptime(date_str, '%B %d, %Y')
+                        match_date = parsed_date.strftime('%Y-%m-%d')
+                    except (IndexError, ValueError):
                         match_date = "Unknown Date"
 
                     match_info = {
@@ -793,13 +796,31 @@ def setup_routes(app):
 
                     matches_by_day[match_date][group_name].append(match_info)
 
-            # Convert defaultdict to regular dict and sort groups alphabetically
+            # Convert defaultdict to regular dict, sort groups alphabetically, and sort dates chronologically
             formatted_data = {}
-            for date in sorted(matches_by_day.keys()):
-                formatted_data[date] = {
-                    group: matches_by_day[date][group]
-                    for group in sorted(matches_by_day[date].keys())
-                }
+            # Create a list of (date, groups) pairs for sorting
+            date_groups = []
+            for date in matches_by_day.keys():
+                try:
+                    # Parse date string to datetime for chronological sorting
+                    parsed_date = dt.strptime(date, '%Y-%m-%d') if date != "Unknown Date" else dt.max
+                    groups = {
+                        group: matches_by_day[date][group]
+                        for group in sorted(matches_by_day[date].keys())
+                    }
+                    date_groups.append((parsed_date, date, groups))
+                except ValueError:
+                    # Handle invalid or unknown dates by placing them at the end
+                    date_groups.append((dt.max, date, {
+                        group: matches_by_day[date][group]
+                        for group in sorted(matches_by_day[date].keys())
+                    }))
+
+            # Sort by parsed date
+            date_groups.sort(key=lambda x: x[0])
+            # Build final formatted data
+            for _, date_str, groups in date_groups:
+                formatted_data[date_str] = groups
 
             logger.debug(f"Successfully retrieved EWC match data for {game_slug} grouped by day")
             return jsonify({
