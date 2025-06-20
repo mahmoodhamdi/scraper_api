@@ -1,28 +1,53 @@
 import sqlite3
 import re
+import os
+import logging
+import shutil
 from datetime import datetime
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from urllib.parse import urlparse
+from werkzeug.utils import secure_filename
+from flask_cors import CORS
 from scraper.liquipedia_scraper import fetch_tournaments, get_matches_by_status
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Configure upload folder
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def init_db():
     """Initialize the SQLite database and ensure news table has correct schema"""
     conn = sqlite3.connect('news.db')
     cursor = conn.cursor()
     
+    # Create uploads directory if it doesn't exist
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+    
     # Check if the news table exists
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='news'")
     table_exists = cursor.fetchone()
     
     if table_exists:
-        # Check the schema to ensure id is AUTOINCREMENT
+        # Check the schema to ensure id is AUTOINCREMENT and thumbnail_url exists
         cursor.execute("PRAGMA table_info(news)")
-        columns = [col[1] for col in cursor.fetchall()]
-        id_info = [col for col in cursor.fetchall() if col[1] == 'id']
+        columns = {col[1]: col for col in cursor.fetchall()}
+        
+        # If thumbnail_url doesn't exist, add it
+        if 'thumbnail_url' not in columns:
+            cursor.execute('ALTER TABLE news ADD COLUMN thumbnail_url TEXT')
         
         # If id is not properly set up, migrate the table
-        if not id_info or 'AUTOINCREMENT' not in cursor.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='news'").fetchone()[0]:
+        if 'id' not in columns or 'AUTOINCREMENT' not in cursor.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='news'").fetchone()[0]:
             cursor.execute('''
                 CREATE TABLE news_temp (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,7 +89,22 @@ def init_db():
         ''')
         conn.commit()
     
-    conn.close()    
+    conn.close()
+
+def reset_db_sequence():
+    """Reset the SQLite sequence for the news table"""
+    try:
+        conn = sqlite3.connect('news.db')
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name='news'")
+        conn.commit()
+        logger.debug("Reset SQLite sequence for 'news' table")
+    except sqlite3.Error as e:
+        logger.error(f"Failed to reset SQLite sequence: {str(e)}")
+        raise
+    finally:
+        conn.close()
+
 def is_valid_url(url):
     """Validate URL format"""
     if not url:
@@ -98,68 +138,96 @@ def setup_routes(app):
         """
         Create a new news item
         ---
+        consumes:
+          - multipart/form-data
+          - application/json
         parameters:
-          - name: body
-            in: body
+          - name: title
+            in: formData
+            type: string
             required: true
-            schema:
-              type: object
-              required:
-                - title
-                - writer
-              properties:
-                title:
-                  type: string
-                  example: "New Tournament Announced"
-                description:
-                  type: string
-                  example: "Details about the upcoming tournament"
-                writer:
-                  type: string
-                  example: "John Doe"
-                thumbnail_url:
-                  type: string
-                  example: "https://example.com/image.jpg"
-                representatives:
-                  type: string
-                  example: "https://example.com/news"
+          - name: writer
+            in: formData
+            type: string
+            required: true
+          - name: description
+            in: formData
+            type: string
+          - name: thumbnail_url
+            in: formData
+            type: string
+          - name: thumbnail_file
+            in: formData
+            type: file
+          - name: news_link
+            in: formData
+            type: string
         responses:
           201:
             description: News item created successfully
           400:
             description: Invalid input data
         """
-        data = request.get_json()
+        title = request.form.get('title', '').strip()
+        writer = request.form.get('writer', '').strip()
+        description = request.form.get('description', '').strip()
+        thumbnail_url = request.form.get('thumbnail_url', '').strip()
+        news_link = request.form.get('news_link', '').strip()
         
         # Required fields validation
-        if not data.get('title') or not data.get('writer'):
+        if not title or not writer:
             return jsonify({"error": "Title and writer are required"}), 400
             
-        # URL validations
-        if data.get('thumbnail_url') and not is_valid_thumbnail(data.get('thumbnail_url')):
-            return jsonify({"error": "Invalid thumbnail URL"}), 400
+        # Handle thumbnail (either URL or file)
+        final_thumbnail_url = ''
+        if 'thumbnail_file' in request.files and request.files['thumbnail_file']:
+            file = request.files['thumbnail_file']
+            logger.debug(f"Received file: {file.filename if file else 'None'}")
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                # Create unique filename with timestamp
+                timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+                unique_filename = f"{timestamp}_{filename}"
+                file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+                logger.debug(f"Saving file to: {file_path}")
+                file.save(file_path)
+                final_thumbnail_url = f"/{UPLOAD_FOLDER}/{unique_filename}"
+                logger.debug(f"Set final_thumbnail_url to: {final_thumbnail_url}")
+            else:
+                return jsonify({"error": "Invalid file type. Allowed: png, jpg, jpeg, gif, webp"}), 400
+        elif thumbnail_url:
+            logger.debug(f"Received thumbnail_url: {thumbnail_url}")
+            if not is_valid_thumbnail(thumbnail_url):
+                return jsonify({"error": "Invalid thumbnail URL"}), 400
+            final_thumbnail_url = thumbnail_url
+            logger.debug(f"Set final_thumbnail_url to: {final_thumbnail_url}")
             
-        if data.get('news_link') and not is_valid_url(data.get('news_link')):
+        # URL validation for news_link
+        if news_link and not is_valid_url(news_link):
             return jsonify({"error": "Invalid news link URL"}), 400
             
         # Input sanitization
-        title = data.get('title').strip()[:255]
-        writer = data.get('writer').strip()[:100]
-        description = data.get('description', '').strip()[:2000]
-        thumbnail_url = data.get('thumbnail_url', '').strip()
-        news_link = data.get('news_link', '').strip()
+        title = title[:255]
+        writer = writer[:100]
+        description = description[:2000]
         
         try:
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
             
+            logger.debug(f"Inserting news with thumbnail_url: {final_thumbnail_url}")
             cursor.execute('''
                 INSERT INTO news (title, description, writer, thumbnail_url, news_link)
                 VALUES (?, ?, ?, ?, ?)
-            ''', (title, description, writer, thumbnail_url, news_link))
+            ''', (title, description, writer, final_thumbnail_url, news_link))
             
             conn.commit()
             news_id = cursor.lastrowid
+            
+            # Verify the inserted data
+            cursor.execute('SELECT thumbnail_url FROM news WHERE id = ?', (news_id,))
+            saved_thumbnail_url = cursor.fetchone()[0]
+            logger.debug(f"Saved thumbnail_url in DB: {saved_thumbnail_url}")
             
             return jsonify({
                 "message": "News created successfully",
@@ -167,6 +235,7 @@ def setup_routes(app):
             }), 201
             
         except sqlite3.Error as e:
+            logger.error(f"Database error: {str(e)}")
             return jsonify({"error": f"Database error: {str(e)}"}), 500
         finally:
             conn.close()
@@ -237,12 +306,15 @@ def setup_routes(app):
                     'title': row[1],
                     'description': row[2],
                     'writer': row[3],
-                    'thumbnail_url': row[4],
+                    'thumbnail_url': row[4] or '',
                     'news_link': row[5],
                     'created_at': row[6],
                     'updated_at': row[7]
                 } for row in cursor.fetchall()
             ]
+            
+            # Log the retrieved thumbnail_urls
+            logger.debug(f"Retrieved news items: {[item['thumbnail_url'] for item in news_items]}")
             
             # Get total count for pagination
             count_query = 'SELECT COUNT(*) FROM news WHERE 1=1'
@@ -270,6 +342,7 @@ def setup_routes(app):
             })
             
         except sqlite3.Error as e:
+            logger.error(f"Database error: {str(e)}")
             return jsonify({"error": f"Database error: {str(e)}"}), 500
         finally:
             conn.close()
@@ -279,69 +352,103 @@ def setup_routes(app):
         """
         Update an existing news item
         ---
+        consumes:
+          - multipart/form-data
+          - application/json
         parameters:
           - name: id
             in: path
             type: integer
             required: true
-          - name: body
-            in: body
-            required: true
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                writer:
-                  type: string
-                thumbnail_url:
-                  type: string
-                news_link:
-                  type: string
+          - name: title
+            in: formData
+            type: string
+          - name: description
+            in: formData
+            type: string
+          - name: writer
+            in: formData
+            type: string
+          - name: thumbnail_url
+            in: formData
+            type: string
+          - name: thumbnail_file
+            in: formData
+            type: file
+          - name: news_link
+            in: formData
+            type: string
         responses:
           200:
             description: News item updated successfully
           404:
             description: News item not found
         """
-        data = request.get_json()
-        
-        # Validate URLs if provided
-        if 'thumbnail_url' in data and data['thumbnail_url'] and not is_valid_thumbnail(data['thumbnail_url']):
-            return jsonify({"error": "Invalid thumbnail URL"}), 400
-            
-        if 'news_link' in data and data['news_link'] and not is_valid_url(data['news_link']):
-            return jsonify({"error": "Invalid news link URL"}), 400
-            
+        # Check if news item exists
         try:
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
-            
-            # Check if news item exists
             cursor.execute('SELECT id FROM news WHERE id = ?', (id,))
             if not cursor.fetchone():
+                conn.close()
                 return jsonify({"error": "News item not found"}), 404
-                
-            # Prepare update data
-            update_data = {}
-            if 'title' in data:
-                update_data['title'] = data['title'].strip()[:255]
-            if 'description' in data:
-                update_data['description'] = data['description'].strip()[:2000]
-            if 'writer' in data:
-                update_data['writer'] = data['writer'].strip()[:100]
-            if 'thumbnail_url' in data:
-                update_data['thumbnail_url'] = data['thumbnail_url'].strip()
-            if 'news_link' in data:
-                update_data['news_link'] = data['news_link'].strip()
-                
-            if not update_data:
-                return jsonify({"error": "No data provided to update"}), 400
-                
-            update_data['updated_at'] = datetime.utcnow().isoformat()
+        except sqlite3.Error as e:
+            conn.close()
+            return jsonify({"error": f"Database error: {str(e)}"}), 500
             
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        writer = request.form.get('writer', '').strip()
+        thumbnail_url = request.form.get('thumbnail_url', '').strip()
+        news_link = request.form.get('news_link', '').strip()
+        
+        # Handle thumbnail (either URL or file)
+        final_thumbnail_url = None
+        if 'thumbnail_file' in request.files and request.files['thumbnail_file']:
+            file = request.files['thumbnail_file']
+            logger.debug(f"Received file for update: {file.filename if file else 'None'}")
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+                unique_filename = f"{timestamp}_{filename}"
+                file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+                logger.debug(f"Saving update file to: {file_path}")
+                file.save(file_path)
+                final_thumbnail_url = f"/{UPLOAD_FOLDER}/{unique_filename}"
+                logger.debug(f"Set final_thumbnail_url for update to: {final_thumbnail_url}")
+            else:
+                return jsonify({"error": "Invalid file type. Allowed: png, jpg, jpeg, gif, webp"}), 400
+        elif thumbnail_url:
+            logger.debug(f"Received thumbnail_url for update: {thumbnail_url}")
+            if not is_valid_thumbnail(thumbnail_url):
+                return jsonify({"error": "Invalid thumbnail URL"}), 400
+            final_thumbnail_url = thumbnail_url
+            logger.debug(f"Set final_thumbnail_url for update to: {final_thumbnail_url}")
+            
+        # URL validation for news_link
+        if news_link and not is_valid_url(news_link):
+            return jsonify({"error": "Invalid news link URL"}), 400
+            
+        # Prepare update data
+        update_data = {}
+        if title:
+            update_data['title'] = title[:255]
+        if description:
+            update_data['description'] = description[:2000]
+        if writer:
+            update_data['writer'] = writer[:100]
+        if final_thumbnail_url is not None:
+            update_data['thumbnail_url'] = final_thumbnail_url
+        if news_link:
+            update_data['news_link'] = news_link
+            
+        if not update_data:
+            conn.close()
+            return jsonify({"error": "No data provided to update"}), 400
+            
+        update_data['updated_at'] = datetime.utcnow().isoformat()
+        
+        try:
             # Build update query
             set_clause = ', '.join(f'{key} = ?' for key in update_data.keys())
             query = f'UPDATE news SET {set_clause} WHERE id = ?'
@@ -353,6 +460,7 @@ def setup_routes(app):
             return jsonify({"message": "News updated successfully"})
             
         except sqlite3.Error as e:
+            logger.error(f"Database error: {str(e)}")
             return jsonify({"error": f"Database error: {str(e)}"}), 500
         finally:
             conn.close()
@@ -388,6 +496,92 @@ def setup_routes(app):
             return jsonify({"message": "News deleted successfully"})
             
         except sqlite3.Error as e:
+            logger.error(f"Database error: {str(e)}")
+            return jsonify({"error": f"Database error: {str(e)}"}), 500
+        finally:
+            conn.close()
+
+    @app.route('/api/news', methods=['DELETE'])
+    def delete_all_news():
+        """
+        Delete all news items and reset ID sequence
+        ---
+        responses:
+          200:
+            description: All news items deleted successfully
+          500:
+            description: Database error
+        """
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            
+            cursor.execute('DELETE FROM news')
+            conn.commit()
+            
+            # Reset the ID sequence
+            reset_db_sequence()
+            
+            return jsonify({"message": "All news items deleted successfully and ID sequence reset"})
+            
+        except sqlite3.Error as e:
+            logger.error(f"Database error: {str(e)}")
+            return jsonify({"error": f"Database error: {str(e)}"}), 500
+        finally:
+            conn.close()
+
+    @app.route('/api/reset_db', methods=['POST'])
+    def reset_db():
+        """
+        Reset the database by deleting all news items, resetting ID sequence, and optionally clearing uploads
+        ---
+        consumes:
+          - application/json
+        parameters:
+          - name: clear_uploads
+            in: body
+            type: boolean
+            required: false
+            description: Whether to delete all uploaded files in the uploads folder
+        responses:
+          200:
+            description: Database reset successfully
+          500:
+            description: Database error
+        """
+        data = request.get_json() or {}
+        clear_uploads = data.get('clear_uploads', False)
+        
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            
+            # Delete all news items
+            cursor.execute('DELETE FROM news')
+            conn.commit()
+            
+            # Reset the ID sequence
+            reset_db_sequence()
+            
+            # Optionally clear the uploads folder
+            if clear_uploads:
+                if os.path.exists(UPLOAD_FOLDER):
+                    for filename in os.listdir(UPLOAD_FOLDER):
+                        file_path = os.path.join(UPLOAD_FOLDER, filename)
+                        try:
+                            if os.path.isfile(file_path):
+                                os.unlink(file_path)
+                            elif os.path.isdir(file_path):
+                                shutil.rmtree(file_path)
+                            logger.debug(f"Deleted file: {file_path}")
+                        except Exception as e:
+                            logger.error(f"Failed to delete file {file_path}: {str(e)}")
+                    logger.debug("Cleared uploads folder")
+            
+            return jsonify({"message": "Database reset successfully"})
+            
+        except sqlite3.Error as e:
+            logger.error(f"Database error: {str(e)}")
             return jsonify({"error": f"Database error: {str(e)}"}), 500
         finally:
             conn.close()
@@ -396,6 +590,10 @@ def create_app():
     """Create and configure the Flask app"""
     app = Flask(__name__)
     Swagger(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    
+    # Configure upload folder
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
     # Initialize database
     init_db()
@@ -434,6 +632,7 @@ def create_app():
     
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run()
