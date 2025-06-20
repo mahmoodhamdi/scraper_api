@@ -3,6 +3,8 @@ import re
 import os
 import logging
 import shutil
+import requests
+from bs4 import BeautifulSoup
 from datetime import datetime
 from flask import Flask, jsonify, request
 from flasgger import Swagger
@@ -353,7 +355,7 @@ def setup_routes(app):
         Update an existing news item
         ---
         consumes:
-          - multipart/form-data
+          - multipart/invalid input data
           - application/json
         parameters:
           - name: id
@@ -586,6 +588,93 @@ def setup_routes(app):
         finally:
             conn.close()
 
+    @app.route('/api/ewc_dota2_matches', methods=['GET'])
+    def get_ewc_dota2_matches():
+        """
+        Get Esports World Cup 2025 Dota 2 match data
+        ---
+        responses:
+          200:
+            description: Successfully retrieved Dota 2 match data
+          500:
+            description: Server error while fetching match data
+        """
+        try:
+            # Define the URL and headers for scraping
+            url = 'https://liquipedia.net/dota2/Esports_World_Cup/2025/Group_Stage'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
+            }
+
+            # Fetch the webpage
+            logger.debug(f"Fetching data from {url}")
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            # Parse the HTML
+            soup = BeautifulSoup(response.text, 'html.parser')
+            data = {}
+
+            # Extract group data
+            group_boxes = soup.select('div.template-box')
+            for group in group_boxes:
+                group_name_tag = group.select_one('.brkts-matchlist-title')
+                group_name = group_name_tag.text.strip() if group_name_tag else 'Unknown Group'
+
+                group_matches = []
+                matches_by_day = group.select('.brkts-matchlist-match')
+
+                for match in matches_by_day:
+                    teams = match.select('.brkts-matchlist-opponent')
+
+                    if len(teams) == 2:
+                        team1_name = teams[0].get('aria-label', 'N/A')
+                        logo1_tag = teams[0].select_one('img')
+                        logo1 = "https://liquipedia.net" + logo1_tag['src'] if logo1_tag else "N/A"
+
+                        team2_name = teams[1].get('aria-label', 'N/A')
+                        logo2_tag = teams[1].select_one('img')
+                        logo2 = "https://liquipedia.net" + logo2_tag['src'] if logo2_tag else "N/A"
+                    else:
+                        team1_name, logo1 = "N/A", "N/A"
+                        team2_name, logo2 = "N/A", "N/A"
+
+                    time_tag = match.select_one('span.timer-object')
+                    match_time = time_tag.text.strip() if time_tag else "N/A"
+
+                    score_tag = match.select_one('.brkts-matchlist-score')
+                    score = score_tag.text.strip() if score_tag else "N/A"
+
+                    match_info = {
+                        "Team1": {
+                            "Name": team1_name,
+                            "Logo": logo1
+                        },
+                        "Team2": {
+                            "Name": team2_name,
+                            "Logo": logo2
+                        },
+                        "MatchTime": match_time,
+                        "Score": score
+                    }
+
+                    group_matches.append(match_info)
+
+                data[group_name] = group_matches
+
+            logger.debug("Successfully retrieved EWC Dota 2 match data")
+            return jsonify({
+                "message": "Match data retrieved successfully",
+                "data": data
+            })
+
+        except requests.RequestException as e:
+            logger.error(f"Error fetching data from Liquipedia: {str(e)}")
+            return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
+        except Exception as e:
+            logger.error(f"Server error while processing match data: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
 def create_app():
     """Create and configure the Flask app"""
     app = Flask(__name__)
@@ -622,7 +711,7 @@ def create_app():
         force = data.get("force", False)
 
         if not game_slug:
-            return jsonify({"error": "Missing 'game' in request body"}), 400
+            return jsonify({"error": "Minimal 'game' in request body"}), 400
 
         result = get_matches_by_status(game_slug, force=force)
         return jsonify(result)
