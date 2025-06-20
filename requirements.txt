@@ -3,3 +3,4 @@ requests
 beautifulsoup4 
 flasgger
 cors
+flask_cors
