@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from scraper.liquipedia_scraper import fetch_tournaments, get_matches_by_status
+from collections import defaultdict
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -686,6 +687,124 @@ def setup_routes(app):
             return jsonify({
                 "message": f"Match data retrieved successfully for {game_slug}",
                 "data": data
+            })
+
+        except requests.RequestException as e:
+            logger.error(f"Error fetching data from Liquipedia for {game_slug}: {str(e)}")
+            return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
+        except Exception as e:
+            logger.error(f"Server error while processing match data for {game_slug}: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+    @app.route('/api/ewc_matches_by_day', methods=['POST'])
+    def get_ewc_matches_by_day():
+        """
+        Get Esports World Cup 2025 match data for a specified game, grouped by day and sorted by group
+        ---
+        consumes:
+          - application/json
+        parameters:
+          - name: game
+            in: body
+            type: string
+            required: true
+            description: The game slug (e.g., 'dota2', 'csgo', 'lol')
+        responses:
+          200:
+            description: Successfully retrieved match data grouped by day
+          400:
+            description: Missing or invalid game parameter
+          500:
+            description: Server error while fetching match data
+        """
+        data = request.get_json()
+        game_slug = data.get('game')
+
+        if not game_slug:
+            logger.error("Missing 'game' in request body")
+            return jsonify({"error": "Missing 'game' in request body"}), 400
+
+        # Sanitize game slug to prevent injection
+        game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
+
+        try:
+            # Define the URL and headers for scraping
+            url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
+            }
+
+            # Fetch the webpage
+            logger.debug(f"Fetching data from {url}")
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            # Parse the HTML
+            soup = BeautifulSoup(response.text, 'html.parser')
+            matches_by_day = defaultdict(lambda: defaultdict(list))
+
+            # Extract group data
+            group_boxes = soup.select('div.template-box')
+            for group in group_boxes:
+                group_name_tag = group.select_one('.brkts-matchlist-title')
+                group_name = group_name_tag.text.strip() if group_name_tag else 'Unknown Group'
+
+                matches_by_day_group = group.select('.brkts-matchlist-match')
+
+                for match in matches_by_day_group:
+                    teams = match.select('.brkts-matchlist-opponent')
+
+                    if len(teams) == 2:
+                        team1_name = teams[0].get('aria-label', 'N/A')
+                        logo1_tag = teams[0].select_one('img')
+                        logo1 = f"https://liquipedia.net{logo1_tag['src']}" if logo1_tag else "N/A"
+
+                        team2_name = teams[1].get('aria-label', 'N/A')
+                        logo2_tag = teams[1].select_one('img')
+                        logo2 = f"https://liquipedia.net{logo2_tag['src']}" if logo2_tag else "N/A"
+                    else:
+                        team1_name, logo1 = "N/A", "N/A"
+                        team2_name, logo2 = "N/A", "N/A"
+
+                    time_tag = match.select_one('span.timer-object')
+                    match_time = time_tag.text.strip() if time_tag else "N/A"
+
+                    score_tag = match.select_one('.brkts-matchlist-score')
+                    score = score_tag.text.strip() if score_tag else "N/A"
+
+                    # Extract date from MatchTime (e.g., "July 8, 2025" from "July 8, 2025 - 12:00 AST")
+                    try:
+                        match_date = ' '.join(match_time.split(' - ')[0].split()[:3])
+                    except IndexError:
+                        match_date = "Unknown Date"
+
+                    match_info = {
+                        "Team1": {
+                            "Name": team1_name,
+                            "Logo": logo1
+                        },
+                        "Team2": {
+                            "Name": team2_name,
+                            "Logo": logo2
+                        },
+                        "MatchTime": match_time,
+                        "Score": score
+                    }
+
+                    matches_by_day[match_date][group_name].append(match_info)
+
+            # Convert defaultdict to regular dict and sort groups alphabetically
+            formatted_data = {}
+            for date in sorted(matches_by_day.keys()):
+                formatted_data[date] = {
+                    group: matches_by_day[date][group]
+                    for group in sorted(matches_by_day[date].keys())
+                }
+
+            logger.debug(f"Successfully retrieved EWC match data for {game_slug} grouped by day")
+            return jsonify({
+                "message": f"Match data retrieved successfully for {game_slug}",
+                "data": formatted_data
             })
 
         except requests.RequestException as e:
