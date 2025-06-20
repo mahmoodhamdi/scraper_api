@@ -217,7 +217,7 @@ def setup_routes(app):
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
             
-            logger.debug(f"Inserting news with thumbnail_url: {final_thumbnail_url}")
+            logger.debug(f"Inserting news item with thumbnail_url: {final_thumbnail_url}")
             cursor.execute('''
                 INSERT INTO news (title, description, writer, thumbnail_url, news_link)
                 VALUES (?, ?, ?, ?, ?)
@@ -355,7 +355,7 @@ def setup_routes(app):
         Update an existing news item
         ---
         consumes:
-          - multipart/invalid input data
+          - multipart/form-data
           - application/json
         parameters:
           - name: id
@@ -588,20 +588,40 @@ def setup_routes(app):
         finally:
             conn.close()
 
-    @app.route('/api/ewc_dota2_matches', methods=['GET'])
-    def get_ewc_dota2_matches():
+    @app.route('/api/ewc_matches', methods=['POST'])
+    def get_ewc_matches():
         """
-        Get Esports World Cup 2025 Dota 2 match data
+        Get Esports World Cup 2025 match data for a specified game
         ---
+        consumes:
+          - application/json
+        parameters:
+          - name: game
+            in: body
+            type: string
+            required: true
+            description: The game slug (e.g., 'dota2', 'csgo', 'lol')
         responses:
           200:
-            description: Successfully retrieved Dota 2 match data
+            description: Successfully retrieved match data
+          400:
+            description: Missing or invalid game parameter
           500:
             description: Server error while fetching match data
         """
+        data = request.get_json()
+        game_slug = data.get('game')
+
+        if not game_slug:
+            logger.error("Missing 'game' in request body")
+            return jsonify({"error": "Missing 'game' in request body"}), 400
+
+        # Sanitize game slug to prevent injection
+        game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
+
         try:
             # Define the URL and headers for scraping
-            url = 'https://liquipedia.net/dota2/Esports_World_Cup/2025/Group_Stage'
+            url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
             }
@@ -630,11 +650,11 @@ def setup_routes(app):
                     if len(teams) == 2:
                         team1_name = teams[0].get('aria-label', 'N/A')
                         logo1_tag = teams[0].select_one('img')
-                        logo1 = "https://liquipedia.net" + logo1_tag['src'] if logo1_tag else "N/A"
+                        logo1 = f"https://liquipedia.net{logo1_tag['src']}" if logo1_tag else "N/A"
 
                         team2_name = teams[1].get('aria-label', 'N/A')
                         logo2_tag = teams[1].select_one('img')
-                        logo2 = "https://liquipedia.net" + logo2_tag['src'] if logo2_tag else "N/A"
+                        logo2 = f"https://liquipedia.net{logo2_tag['src']}" if logo2_tag else "N/A"
                     else:
                         team1_name, logo1 = "N/A", "N/A"
                         team2_name, logo2 = "N/A", "N/A"
@@ -662,17 +682,17 @@ def setup_routes(app):
 
                 data[group_name] = group_matches
 
-            logger.debug("Successfully retrieved EWC Dota 2 match data")
+            logger.debug(f"Successfully retrieved EWC match data for {game_slug}")
             return jsonify({
-                "message": "Match data retrieved successfully",
+                "message": f"Match data retrieved successfully for {game_slug}",
                 "data": data
             })
 
         except requests.RequestException as e:
-            logger.error(f"Error fetching data from Liquipedia: {str(e)}")
+            logger.error(f"Error fetching data from Liquipedia for {game_slug}: {str(e)}")
             return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
         except Exception as e:
-            logger.error(f"Server error while processing match data: {str(e)}")
+            logger.error(f"Server error while processing match data for {game_slug}: {str(e)}")
             return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 def create_app():
@@ -711,7 +731,7 @@ def create_app():
         force = data.get("force", False)
 
         if not game_slug:
-            return jsonify({"error": "Minimal 'game' in request body"}), 400
+            return jsonify({"error": "Missing 'game' in request body"}), 400
 
         result = get_matches_by_status(game_slug, force=force)
         return jsonify(result)
