@@ -5,7 +5,7 @@ import logging
 import shutil
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, time
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from urllib.parse import urlparse
@@ -133,6 +133,25 @@ def is_valid_thumbnail(url):
         parsed.path.lower().endswith(image_extensions) or 
         parsed.scheme in ('http', 'https')
     )
+
+def is_valid_date(date_str):
+    """Validate date format (YYYY-MM-DD)"""
+    try:
+        dt.strptime(date_str, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
+def parse_match_time(match_time):
+    """Parse match time string to datetime for sorting"""
+    try:
+        # Extract time portion (e.g., "10:00 CEST" from "July 8, 2025 - 10:00 CEST")
+        time_str = match_time.split(' - ')[1] if ' - ' in match_time else match_time
+        time_str = time_str.split()[0]  # Get "10:00" from "10:00 CEST"
+        parsed_time = dt.strptime(time_str, '%H:%M').time()
+        return parsed_time
+    except (IndexError, ValueError):
+        return time.max  # Place invalid times at the end
 
 def setup_routes(app):
     """Setup news-related API routes"""
@@ -700,7 +719,7 @@ def setup_routes(app):
     @app.route('/api/ewc_matches_by_day', methods=['POST'])
     def get_ewc_matches_by_day():
         """
-        Get Esports World Cup 2025 match data for a specified game, grouped by day and sorted by group
+        Get Esports World Cup 2025 match data for a specified game, grouped by day and sorted by group and time
         ---
         consumes:
           - application/json
@@ -710,20 +729,30 @@ def setup_routes(app):
             type: string
             required: true
             description: The game slug (e.g., 'dota2', 'csgo', 'lol')
+          - name: date
+            in: body
+            type: string
+            required: false
+            description: Filter matches by specific date (YYYY-MM-DD, e.g., '2025-07-08')
         responses:
           200:
             description: Successfully retrieved match data grouped by day
           400:
-            description: Missing or invalid game parameter
+            description: Missing or invalid game parameter or invalid date format
           500:
             description: Server error while fetching match data
         """
         data = request.get_json()
         game_slug = data.get('game')
+        filter_date = data.get('date')
 
         if not game_slug:
             logger.error("Missing 'game' in request body")
             return jsonify({"error": "Missing 'game' in request body"}), 400
+
+        if filter_date and not is_valid_date(filter_date):
+            logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
+            return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
 
         # Sanitize game slug to prevent injection
         game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
@@ -781,6 +810,10 @@ def setup_routes(app):
                     except (IndexError, ValueError):
                         match_date = "Unknown Date"
 
+                    # Skip matches that don't match the filter date, if provided
+                    if filter_date and match_date != filter_date:
+                        continue
+
                     match_info = {
                         "Team1": {
                             "Name": team1_name,
@@ -791,28 +824,37 @@ def setup_routes(app):
                             "Logo": logo2
                         },
                         "MatchTime": match_time,
-                        "Score": score
+                        "Score": score,
+                        "_sort_time": parse_match_time(match_time)  # For sorting
                     }
 
                     matches_by_day[match_date][group_name].append(match_info)
 
-            # Convert defaultdict to regular dict, sort groups alphabetically, and sort dates chronologically
+            # Convert defaultdict to regular dict, sort groups alphabetically, and sort matches by time
             formatted_data = {}
-            # Create a list of (date, groups) pairs for sorting
             date_groups = []
             for date in matches_by_day.keys():
                 try:
-                    # Parse date string to datetime for chronological sorting
                     parsed_date = dt.strptime(date, '%Y-%m-%d') if date != "Unknown Date" else dt.max
-                    groups = {
-                        group: matches_by_day[date][group]
-                        for group in sorted(matches_by_day[date].keys())
-                    }
+                    groups = {}
+                    for group in sorted(matches_by_day[date].keys()):
+                        # Sort matches by time within each group
+                        sorted_matches = sorted(
+                            matches_by_day[date][group],
+                            key=lambda x: x['_sort_time']
+                        )
+                        # Remove _sort_time from output
+                        groups[group] = [{k: v for k, v in match.items() if k != '_sort_time'} for match in sorted_matches]
                     date_groups.append((parsed_date, date, groups))
                 except ValueError:
-                    # Handle invalid or unknown dates by placing them at the end
                     date_groups.append((dt.max, date, {
-                        group: matches_by_day[date][group]
+                        group: [
+                            {k: v for k, v in match.items() if k != '_sort_time'}
+                            for match in sorted(
+                                matches_by_day[date][group],
+                                key=lambda x: x['_sort_time']
+                            )
+                        ]
                         for group in sorted(matches_by_day[date].keys())
                     }))
 
@@ -822,9 +864,152 @@ def setup_routes(app):
             for _, date_str, groups in date_groups:
                 formatted_data[date_str] = groups
 
-            logger.debug(f"Successfully retrieved EWC match data for {game_slug} grouped by day")
+            logger.debug(f"Successfully retrieved EWC match data for {game_slug}{' on ' + filter_date if filter_date else ''}")
             return jsonify({
-                "message": f"Match data retrieved successfully for {game_slug}",
+                "message": f"Match data retrieved successfully for {game_slug}{' on ' + filter_date if filter_date else ''}",
+                "data": formatted_data
+            })
+
+        except requests.RequestException as e:
+            logger.error(f"Error fetching data from Liquipedia for {game_slug}: {str(e)}")
+            return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
+        except Exception as e:
+            logger.error(f"Server error while processing match data for {game_slug}: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+    @app.route('/api/ewc_matches_by_date', methods=['POST'])
+    def get_ewc_matches_by_date():
+        """
+        Get Esports World Cup 2025 match data for a specified game and date, sorted by group and time
+        ---
+        consumes:
+          - application/json
+        parameters:
+          - name: game
+            in: body
+            type: string
+            required: true
+            description: The game slug (e.g., 'dota2', 'csgo', 'lol')
+          - name: date
+            in: body
+            type: string
+            required: true
+            description: The specific date to filter matches (YYYY-MM-DD, e.g., '2025-07-08')
+        responses:
+          200:
+            description: Successfully retrieved match data for the specified date
+          400:
+            description: Missing or invalid game or date parameter
+          500:
+            description: Server error while fetching match data
+        """
+        data = request.get_json()
+        game_slug = data.get('game')
+        filter_date = data.get('date')
+
+        if not game_slug:
+            logger.error("Missing 'game' in request body")
+            return jsonify({"error": "Missing 'game' in request body"}), 400
+
+        if not filter_date:
+            logger.error("Missing 'date' in request body")
+            return jsonify({"error": "Missing 'date' in request body"}), 400
+
+        if not is_valid_date(filter_date):
+            logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
+            return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
+
+        # Sanitize game slug to prevent injection
+        game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
+
+        try:
+            # Define the URL and headers for scraping
+            url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
+            }
+
+            # Fetch the webpage
+            logger.debug(f"Fetching data from {url}")
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  # Raise an exception for bad status codes
+
+            # Parse the HTML
+            soup = BeautifulSoup(response.text, 'html.parser')
+            matches_by_group = defaultdict(list)
+
+            # Extract group data
+            group_boxes = soup.select('div.template-box')
+            for group in group_boxes:
+                group_name_tag = group.select_one('.brkts-matchlist-title')
+                group_name = group_name_tag.text.strip() if group_name_tag else 'Unknown Group'
+
+                matches_by_day_group = group.select('.brkts-matchlist-match')
+
+                for match in matches_by_day_group:
+                    teams = match.select('.brkts-matchlist-opponent')
+
+                    if len(teams) == 2:
+                        team1_name = teams[0].get('aria-label', 'N/A')
+                        logo1_tag = teams[0].select_one('img')
+                        logo1 = f"https://liquipedia.net{logo1_tag['src']}" if logo1_tag else "N/A"
+
+                        team2_name = teams[1].get('aria-label', 'N/A')
+                        logo2_tag = teams[1].select_one('img')
+                        logo2 = f"https://liquipedia.net{logo2_tag['src']}" if logo2_tag else "N/A"
+                    else:
+                        team1_name, logo1 = "N/A", "N/A"
+                        team2_name, logo2 = "N/A", "N/A"
+
+                    time_tag = match.select_one('span.timer-object')
+                    match_time = time_tag.text.strip() if time_tag else "N/A"
+
+                    score_tag = match.select_one('.brkts-matchlist-score')
+                    score = score_tag.text.strip() if score_tag else "N/A"
+
+                    # Extract date from MatchTime and reformat to YYYY-MM-DD
+                    try:
+                        date_str = ' '.join(match_time.split(' - ')[0].split()[:3])
+                        parsed_date = dt.strptime(date_str, '%B %d, %Y')
+                        match_date = parsed_date.strftime('%Y-%m-%d')
+                    except (IndexError, ValueError):
+                        match_date = "Unknown Date"
+
+                    # Only include matches for the specified date
+                    if match_date != filter_date:
+                        continue
+
+                    match_info = {
+                        "Team1": {
+                            "Name": team1_name,
+                            "Logo": logo1
+                        },
+                        "Team2": {
+                            "Name": team2_name,
+                            "Logo": logo2
+                        },
+                        "MatchTime": match_time,
+                        "Score": score,
+                        "_sort_time": parse_match_time(match_time)  # For sorting
+                    }
+
+                    matches_by_group[group_name].append(match_info)
+
+            # Sort groups alphabetically and matches by time
+            formatted_data = {}
+            for group in sorted(matches_by_group.keys()):
+                sorted_matches = sorted(
+                    matches_by_group[group],
+                    key=lambda x: x['_sort_time']
+                )
+                formatted_data[group] = [
+                    {k: v for k, v in match.items() if k != '_sort_time'}
+                    for match in sorted_matches
+                ]
+
+            logger.debug(f"Successfully retrieved EWC match data for {game_slug} on {filter_date}")
+            return jsonify({
+                "message": f"Match data retrieved successfully for {game_slug} on {filter_date}",
                 "data": formatted_data
             })
 
