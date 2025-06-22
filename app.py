@@ -153,8 +153,97 @@ def parse_match_time(match_time):
     except (IndexError, ValueError):
         return time.max  # Place invalid times at the end
 
+def get_teams_ewc():
+    """Fetch Esports World Cup 2025 teams from Liquipedia"""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    }
+    BASE_URL = "https://liquipedia.net"
+    url = 'https://liquipedia.net/esports/Esports_World_Cup/2025'
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        teams_data = []
+        all_tables = soup.select('div.table-responsive table.wikitable.sortable')
+
+        target_table = None
+        for table in all_tables:
+            headers_row = table.select_one('tr')
+            headers_ths = headers_row.select('th') if headers_row else []
+            if headers_ths and 'Team Name' in headers_ths[0].text:
+                target_table = table
+                break
+
+        if not target_table:
+            logger.error("Could not find the teams table")
+            return []
+
+        rows = target_table.select('tr')[1:]
+        for row in rows:
+            cols = row.select('td')
+            if len(cols) >= 1:
+                team_name = cols[0].text.strip()
+                logo_tag = cols[0].select_one('img')
+                logo_url = BASE_URL + logo_tag['src'] if logo_tag else None
+
+                teams_data.append({
+                    'team_name': team_name,
+                    'logo_url': logo_url
+                })
+
+        return teams_data
+    
+    except requests.RequestException as e:
+        logger.error(f"Error fetching teams data: {str(e)}")
+        return []
+    except Exception as e:
+        logger.error(f"Error processing teams data: {str(e)}")
+        return []
+
+def get_events_ewc():
+    """Fetch Esports World Cup 2025 events from Liquipedia"""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    }
+    BASE_URL = "https://liquipedia.net"
+    url = 'https://liquipedia.net/esports/Esports_World_Cup/2025'
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        events_data = []
+        events_headers = soup.select_one('div.esports-team-game-list')
+
+        if not events_headers:
+            logger.error("Could not find the events section")
+            return []
+        
+        for span in events_headers.select('span > a'):
+            name = span.text.strip()
+            link = span['href'].strip()
+            full_link = link if link.startswith('http') else BASE_URL + link
+
+            events_data.append({
+                "name": name,
+                "link": full_link
+            })
+        
+        return events_data
+    
+    except requests.RequestException as e:
+        logger.error(f"Error fetching events data: {str(e)}")
+        return []
+    except Exception as e:
+        logger.error(f"Error processing events data: {str(e)}")
+        return []
+
 def setup_routes(app):
-    """Setup news-related API routes"""
+    """Setup API routes"""
     
     @app.route('/api/news', methods=['POST'])
     def create_news():
@@ -1020,6 +1109,66 @@ def setup_routes(app):
             logger.error(f"Server error while processing match data for {game_slug}: {str(e)}")
             return jsonify({"error": f"Server error: {str(e)}"}), 500
 
+    @app.route('/api/ewc_teams', methods=['GET'])
+    def get_ewc_teams():
+        """
+        Get Esports World Cup 2025 teams data
+        ---
+        responses:
+          200:
+            description: Successfully retrieved teams data
+          500:
+            description: Server error while fetching teams data
+        """
+        try:
+            teams_data = get_teams_ewc()
+            if not teams_data:
+                logger.warning("No teams data retrieved")
+                return jsonify({
+                    "message": "No teams data found",
+                    "data": []
+                }), 200
+
+            logger.debug("Successfully retrieved EWC teams data")
+            return jsonify({
+                "message": "Teams data retrieved successfully",
+                "data": teams_data
+            })
+
+        except Exception as e:
+            logger.error(f"Server error while processing teams data: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+    @app.route('/api/ewc_events', methods=['GET'])
+    def get_ewc_events():
+        """
+        Get Esports World Cup 2025 events data
+        ---
+        responses:
+          200:
+            description: Successfully retrieved events data
+          500:
+            description: Server error while fetching events data
+        """
+        try:
+            events_data = get_events_ewc()
+            if not events_data:
+                logger.warning("No events data retrieved")
+                return jsonify({
+                    "message": "No events data found",
+                    "data": []
+                }), 200
+
+            logger.debug("Successfully retrieved EWC events data")
+            return jsonify({
+                "message": "Events data retrieved successfully",
+                "data": events_data
+            })
+
+        except Exception as e:
+            logger.error(f"Server error while processing events data: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
 def create_app():
     """Create and configure the Flask app"""
     app = Flask(__name__)
@@ -1061,7 +1210,7 @@ def create_app():
         result = get_matches_by_status(game_slug, force=force)
         return jsonify(result)
     
-    # Setup news routes
+    # Setup news and other routes
     setup_routes(app)
     
     return app
