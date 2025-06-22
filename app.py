@@ -152,15 +152,22 @@ def is_valid_date(date_str):
     except ValueError:
         return False
 
-def parse_match_time(match_time):
-    """Parse match time string to datetime for sorting"""
+def parse_match_datetime(match_time):
+    """Parse match time string to datetime for sorting by date and time"""
     try:
-        time_str = match_time.split(' - ')[1] if ' - ' in match_time else match_time
-        time_str = time_str.split()[0]
-        parsed_time = dt.strptime(time_str, '%H:%M').time()
-        return parsed_time
+        if ' - ' in match_time:
+            date_str, time_str = match_time.split(' - ')
+            date_str = ' '.join(date_str.split()[:3])  # Take first three words (e.g., "July 8, 2025")
+            time_str = time_str.split()[0]  # Take time part (e.g., "12:00")
+            parsed_datetime = dt.strptime(f"{date_str} {time_str}", '%B %d, %Y %H:%M')
+            return parsed_datetime
+        else:
+            # Handle cases like "August 2, 2025" without time
+            date_str = ' '.join(match_time.split()[:3])
+            parsed_datetime = dt.strptime(date_str, '%B %d, %Y')
+            return parsed_datetime
     except (IndexError, ValueError):
-        return time.max
+        return dt.max
 
 def get_teams_ewc(live=False):
     """Fetch Esports World Cup 2025 teams from Liquipedia or database"""
@@ -1031,7 +1038,7 @@ def setup_routes(app):
                         },
                         "MatchTime": match_time,
                         "Score": score,
-                        "_sort_time": parse_match_time(match_time)
+                        "_sort_time": parse_match_datetime(match_time)
                     }
 
                     matches_by_day[match_date][group_name].append(match_info)
@@ -1181,7 +1188,7 @@ def setup_routes(app):
                         },
                         "MatchTime": match_time,
                         "Score": score,
-                        "_sort_time": parse_match_time(match_time)
+                        "_sort_time": parse_match_datetime(match_time)
                     }
 
                     matches_by_group[group_name].append(match_info)
@@ -1289,7 +1296,7 @@ def setup_routes(app):
     @app.route('/api/ewc_all_matches', methods=['GET'])
     def get_ewc_all_matches():
         """
-        Get all Esports World Cup 2025 match data for all games with pagination and filtering
+        Get all Esports World Cup 2025 match data for all games with pagination and filtering, sorted by match day and time
         ---
         parameters:
           - name: live
@@ -1306,7 +1313,7 @@ def setup_routes(app):
             in: query
             type: integer
             default: 10
-            description: Number of matches per page per group
+            description: Number of matches per page
           - name: game
             in: query
             type: string
@@ -1412,21 +1419,17 @@ def setup_routes(app):
                 for game_name in games_to_remove:
                     del all_matches[game_name]
 
-            # Apply filters and pagination
-            filtered_matches = {}
-            total_matches = 0
+            # Collect all matches for sorting
+            all_matches_list = []
             for game_name, game_data in all_matches.items():
                 if filter_game and game_name.lower() != filter_game.lower():
                     continue
                 if isinstance(game_data, dict) and "message" in game_data:
-                    filtered_matches[game_name] = game_data
-                    continue
+                    continue  # Skip games with error messages
 
-                filtered_game_data = {}
                 for group_name, matches in game_data.items():
                     if filter_group and group_name.lower() != filter_group.lower():
                         continue
-                    filtered_matches_list = []
                     for match in matches:
                         match_time = match.get('MatchTime', 'N/A')
                         try:
@@ -1439,18 +1442,43 @@ def setup_routes(app):
                         if filter_date and match_date != filter_date:
                             continue
 
-                        filtered_matches_list.append(match)
+                        all_matches_list.append({
+                            "game": game_name,
+                            "group": group_name,
+                            "match": match,
+                            "_sort_datetime": parse_match_datetime(match_time)
+                        })
 
-                    # Apply pagination
-                    start_idx = (page - 1) * per_page
-                    end_idx = start_idx + per_page
-                    total_matches += len(filtered_matches_list)
-                    paginated_matches = filtered_matches_list[start_idx:end_idx]
-                    if paginated_matches:
-                        filtered_game_data[group_name] = paginated_matches
+            # Sort matches by datetime
+            sorted_matches = sorted(
+                all_matches_list,
+                key=lambda x: x['_sort_datetime']
+            )
 
-                if filtered_game_data:
-                    filtered_matches[game_name] = filtered_game_data
+            # Apply pagination
+            total_matches = len(sorted_matches)
+            start_idx = (page - 1) * per_page
+            end_idx = start_idx + per_page
+            paginated_matches = sorted_matches[start_idx:end_idx]
+
+            # Reconstruct filtered and paginated matches into the original structure
+            filtered_matches = {}
+            for match_item in paginated_matches:
+                game_name = match_item['game']
+                group_name = match_item['group']
+                match = match_item['match']
+                if game_name not in filtered_matches:
+                    filtered_matches[game_name] = {}
+                if group_name not in filtered_matches[game_name]:
+                    filtered_matches[game_name][group_name] = []
+                filtered_matches[game_name][group_name].append(match)
+
+            # Include games with messages (e.g., "Matches have not been added yet")
+            for game_name, game_data in all_matches.items():
+                if filter_game and game_name.lower() != filter_game.lower():
+                    continue
+                if isinstance(game_data, dict) and "message" in game_data:
+                    filtered_matches[game_name] = game_data
 
             # Prepare response
             response = {
@@ -1465,7 +1493,7 @@ def setup_routes(app):
                 "failed_games": failed_games
             }
 
-            logger.debug("Successfully retrieved all EWC match data with filters and pagination")
+            logger.debug("Successfully retrieved all EWC match data with filters, pagination, and sorted by match day and time")
             return jsonify(response)
 
         except Exception as e:
@@ -1571,7 +1599,7 @@ def setup_routes(app):
                             "Team2": match.get("Team2", {"Name": "N/A", "Logo": "N/A"}),
                             "MatchTime": match_time,
                             "Score": match.get("Score", "N/A"),
-                            "_sort_time": parse_match_time(match_time)
+                            "_sort_time": parse_match_datetime(match_time)
                         }
 
                         matches_by_day[match_date][game_name][group_name].append(match_info)
