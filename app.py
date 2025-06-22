@@ -29,7 +29,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def init_db():
-    """Initialize the SQLite database and ensure news table has correct schema"""
+    """Initialize the SQLite database with news, teams, and events tables"""
     conn = sqlite3.connect('news.db')
     cursor = conn.cursor()
     
@@ -37,20 +37,17 @@ def init_db():
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     
-    # Check if the news table exists
+    # Check and create news table
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='news'")
     table_exists = cursor.fetchone()
     
     if table_exists:
-        # Check the schema to ensure id is AUTOINCREMENT and thumbnail_url exists
         cursor.execute("PRAGMA table_info(news)")
         columns = {col[1]: col for col in cursor.fetchall()}
         
-        # If thumbnail_url doesn't exist, add it
         if 'thumbnail_url' not in columns:
             cursor.execute('ALTER TABLE news ADD COLUMN thumbnail_url TEXT')
         
-        # If id is not properly set up, migrate the table
         if 'id' not in columns or 'AUTOINCREMENT' not in cursor.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='news'").fetchone()[0]:
             cursor.execute('''
                 CREATE TABLE news_temp (
@@ -64,21 +61,14 @@ def init_db():
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
-            
-            # Copy data from old table to new table
             cursor.execute('''
                 INSERT INTO news_temp (id, title, description, writer, thumbnail_url, news_link, created_at, updated_at)
                 SELECT id, title, description, writer, thumbnail_url, news_link, created_at, updated_at
                 FROM news
             ''')
-            
-            # Drop old table and rename new one
             cursor.execute('DROP TABLE news')
             cursor.execute('ALTER TABLE news_temp RENAME TO news')
-            
-            conn.commit()
     else:
-        # Create the news table if it doesn't exist
         cursor.execute('''
             CREATE TABLE news (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -91,18 +81,38 @@ def init_db():
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        conn.commit()
-    
+
+    # Create teams table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS teams (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            team_name TEXT NOT NULL,
+            logo_url TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Create events table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            link TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    conn.commit()
     conn.close()
 
 def reset_db_sequence():
-    """Reset the SQLite sequence for the news table"""
+    """Reset the SQLite sequence for all tables"""
     try:
         conn = sqlite3.connect('news.db')
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM sqlite_sequence WHERE name='news'")
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name IN ('news', 'teams', 'events')")
         conn.commit()
-        logger.debug("Reset SQLite sequence for 'news' table")
+        logger.debug("Reset SQLite sequence for tables")
     except sqlite3.Error as e:
         logger.error(f"Failed to reset SQLite sequence: {str(e)}")
         raise
@@ -112,21 +122,20 @@ def reset_db_sequence():
 def is_valid_url(url):
     """Validate URL format"""
     if not url:
-        return True  # Allow empty URLs
+        return True
     regex = re.compile(
-        r'^https?://'  # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain
-        r'localhost|'  # localhost
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # IP
-        r'(?::\d+)?'  # optional port
+        r'^https?://'
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
+        r'localhost|'
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+        r'(?::\d+)?'
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return bool(regex.match(url))
 
 def is_valid_thumbnail(url):
     """Validate thumbnail URL (image or link)"""
     if not url:
-        return True  # Allow empty thumbnail
-    # Check if URL points to an image
+        return True
     image_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp')
     parsed = urlparse(url)
     return is_valid_url(url) and (
@@ -145,16 +154,30 @@ def is_valid_date(date_str):
 def parse_match_time(match_time):
     """Parse match time string to datetime for sorting"""
     try:
-        # Extract time portion (e.g., "10:00 CEST" from "July 8, 2025 - 10:00 CEST")
         time_str = match_time.split(' - ')[1] if ' - ' in match_time else match_time
-        time_str = time_str.split()[0]  # Get "10:00" from "10:00 CEST"
+        time_str = time_str.split()[0]
         parsed_time = dt.strptime(time_str, '%H:%M').time()
         return parsed_time
     except (IndexError, ValueError):
-        return time.max  # Place invalid times at the end
+        return time.max
 
-def get_teams_ewc():
-    """Fetch Esports World Cup 2025 teams from Liquipedia"""
+def get_teams_ewc(live=False):
+    """Fetch Esports World Cup 2025 teams from Liquipedia or database"""
+    if not live:
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT team_name, logo_url FROM teams')
+            teams_data = [{'team_name': row[0], 'logo_url': row[1]} for row in cursor.fetchall()]
+            conn.close()
+            
+            if teams_data:
+                logger.debug("Retrieved teams data from database")
+                return teams_data
+        except sqlite3.Error as e:
+            logger.error(f"Database error while fetching teams: {str(e)}")
+        
+    # Fetch from Liquipedia if live=True or no data in database
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
     }
@@ -194,6 +217,23 @@ def get_teams_ewc():
                     'logo_url': logo_url
                 })
 
+        # Store in database
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM teams')  # Clear existing teams
+            for team in teams_data:
+                cursor.execute('''
+                    INSERT INTO teams (team_name, logo_url)
+                    VALUES (?, ?)
+                ''', (team['team_name'], team['logo_url']))
+            conn.commit()
+            logger.debug("Stored teams data in database")
+        except sqlite3.Error as e:
+            logger.error(f"Database error while storing teams: {str(e)}")
+        finally:
+            conn.close()
+
         return teams_data
     
     except requests.RequestException as e:
@@ -203,8 +243,23 @@ def get_teams_ewc():
         logger.error(f"Error processing teams data: {str(e)}")
         return []
 
-def get_events_ewc():
-    """Fetch Esports World Cup 2025 events from Liquipedia"""
+def get_events_ewc(live=False):
+    """Fetch Esports World Cup 2025 events from Liquipedia or database"""
+    if not live:
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT name, link FROM events')
+            events_data = [{'name': row[0], 'link': row[1]} for row in cursor.fetchall()]
+            conn.close()
+            
+            if events_data:
+                logger.debug("Retrieved events data from database")
+                return events_data
+        except sqlite3.Error as e:
+            logger.error(f"Database error while fetching events: {str(e)}")
+        
+    # Fetch from Liquipedia if live=True or no data in database
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
     }
@@ -233,6 +288,23 @@ def get_events_ewc():
                 "link": full_link
             })
         
+        # Store in database
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM events')  # Clear existing events
+            for event in events_data:
+                cursor.execute('''
+                    INSERT INTO events (name, link)
+                    VALUES (?, ?)
+                ''', (event['name'], event['link']))
+            conn.commit()
+            logger.debug("Stored events data in database")
+        except sqlite3.Error as e:
+            logger.error(f"Database error while storing events: {str(e)}")
+        finally:
+            conn.close()
+
         return events_data
     
     except requests.RequestException as e:
@@ -286,18 +358,15 @@ def setup_routes(app):
         thumbnail_url = request.form.get('thumbnail_url', '').strip()
         news_link = request.form.get('news_link', '').strip()
         
-        # Required fields validation
         if not title or not writer:
             return jsonify({"error": "Title and writer are required"}), 400
             
-        # Handle thumbnail (either URL or file)
         final_thumbnail_url = ''
         if 'thumbnail_file' in request.files and request.files['thumbnail_file']:
             file = request.files['thumbnail_file']
             logger.debug(f"Received file: {file.filename if file else 'None'}")
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # Create unique filename with timestamp
                 timestamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
                 unique_filename = f"{timestamp}_{filename}"
                 file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
@@ -314,11 +383,9 @@ def setup_routes(app):
             final_thumbnail_url = thumbnail_url
             logger.debug(f"Set final_thumbnail_url to: {final_thumbnail_url}")
             
-        # URL validation for news_link
         if news_link and not is_valid_url(news_link):
             return jsonify({"error": "Invalid news link URL"}), 400
             
-        # Input sanitization
         title = title[:255]
         writer = writer[:100]
         description = description[:2000]
@@ -336,7 +403,6 @@ def setup_routes(app):
             conn.commit()
             news_id = cursor.lastrowid
             
-            # Verify the inserted data
             cursor.execute('SELECT thumbnail_url FROM news WHERE id = ?', (news_id,))
             saved_thumbnail_url = cursor.fetchone()[0]
             logger.debug(f"Saved thumbnail_url in DB: {saved_thumbnail_url}")
@@ -387,7 +453,6 @@ def setup_routes(app):
         search = request.args.get('search', '').strip()
         sort = request.args.get('sort', 'created_at').strip()
         
-        # Validate sort parameter
         if sort not in ('created_at', 'title'):
             sort = 'created_at'
             
@@ -395,7 +460,6 @@ def setup_routes(app):
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
             
-            # Build query
             query = 'SELECT id, title, description, writer, thumbnail_url, news_link, created_at, updated_at FROM news WHERE 1=1'
             params = []
             
@@ -425,10 +489,8 @@ def setup_routes(app):
                 } for row in cursor.fetchall()
             ]
             
-            # Log the retrieved thumbnail_urls
             logger.debug(f"Retrieved news items: {[item['thumbnail_url'] for item in news_items]}")
             
-            # Get total count for pagination
             count_query = 'SELECT COUNT(*) FROM news WHERE 1=1'
             count_params = []
             
@@ -496,7 +558,6 @@ def setup_routes(app):
           404:
             description: News item not found
         """
-        # Check if news item exists
         try:
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
@@ -514,7 +575,6 @@ def setup_routes(app):
         thumbnail_url = request.form.get('thumbnail_url', '').strip()
         news_link = request.form.get('news_link', '').strip()
         
-        # Handle thumbnail (either URL or file)
         final_thumbnail_url = None
         if 'thumbnail_file' in request.files and request.files['thumbnail_file']:
             file = request.files['thumbnail_file']
@@ -537,11 +597,9 @@ def setup_routes(app):
             final_thumbnail_url = thumbnail_url
             logger.debug(f"Set final_thumbnail_url for update to: {final_thumbnail_url}")
             
-        # URL validation for news_link
         if news_link and not is_valid_url(news_link):
             return jsonify({"error": "Invalid news link URL"}), 400
             
-        # Prepare update data
         update_data = {}
         if title:
             update_data['title'] = title[:255]
@@ -561,7 +619,6 @@ def setup_routes(app):
         update_data['updated_at'] = datetime.utcnow().isoformat()
         
         try:
-            # Build update query
             set_clause = ', '.join(f'{key} = ?' for key in update_data.keys())
             query = f'UPDATE news SET {set_clause} WHERE id = ?'
             params = list(update_data.values()) + [id]
@@ -597,7 +654,6 @@ def setup_routes(app):
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
             
-            # Check if news item exists
             cursor.execute('SELECT id FROM news WHERE id = ?', (id,))
             if not cursor.fetchone():
                 return jsonify({"error": "News item not found"}), 404
@@ -631,7 +687,6 @@ def setup_routes(app):
             cursor.execute('DELETE FROM news')
             conn.commit()
             
-            # Reset the ID sequence
             reset_db_sequence()
             
             return jsonify({"message": "All news items deleted successfully and ID sequence reset"})
@@ -645,7 +700,7 @@ def setup_routes(app):
     @app.route('/api/reset_db', methods=['POST'])
     def reset_db():
         """
-        Reset the database by deleting all news items, resetting ID sequence, and optionally clearing uploads
+        Reset the database by deleting all news, teams, events items, resetting ID sequence, and optionally clearing uploads
         ---
         consumes:
           - application/json
@@ -668,14 +723,13 @@ def setup_routes(app):
             conn = sqlite3.connect('news.db')
             cursor = conn.cursor()
             
-            # Delete all news items
             cursor.execute('DELETE FROM news')
+            cursor.execute('DELETE FROM teams')
+            cursor.execute('DELETE FROM events')
             conn.commit()
             
-            # Reset the ID sequence
             reset_db_sequence()
             
-            # Optionally clear the uploads folder
             if clear_uploads:
                 if os.path.exists(UPLOAD_FOLDER):
                     for filename in os.listdir(UPLOAD_FOLDER):
@@ -726,26 +780,18 @@ def setup_routes(app):
             logger.error("Missing 'game' in request body")
             return jsonify({"error": "Missing 'game' in request body"}), 400
 
-        # Sanitize game slug to prevent injection
         game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
 
         try:
-            # Define the URL and headers for scraping
             url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
             }
-
-            # Fetch the webpage
             logger.debug(f"Fetching data from {url}")
             response = requests.get(url, headers=headers)
-            response.raise_for_status()  # Raise an exception for bad status codes
-
-            # Parse the HTML
+            response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             data = {}
-
-            # Extract group data
             group_boxes = soup.select('div.template-box')
             for group in group_boxes:
                 group_name_tag = group.select_one('.brkts-matchlist-title')
@@ -843,26 +889,18 @@ def setup_routes(app):
             logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
             return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
 
-        # Sanitize game slug to prevent injection
         game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
 
         try:
-            # Define the URL and headers for scraping
             url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
             }
-
-            # Fetch the webpage
             logger.debug(f"Fetching data from {url}")
             response = requests.get(url, headers=headers)
-            response.raise_for_status()  # Raise an exception for bad status codes
-
-            # Parse the HTML
+            response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             matches_by_day = defaultdict(lambda: defaultdict(list))
-
-            # Extract group data
             group_boxes = soup.select('div.template-box')
             for group in group_boxes:
                 group_name_tag = group.select_one('.brkts-matchlist-title')
@@ -891,7 +929,6 @@ def setup_routes(app):
                     score_tag = match.select_one('.brkts-matchlist-score')
                     score = score_tag.text.strip() if score_tag else "N/A"
 
-                    # Extract date from MatchTime and reformat to YYYY-MM-DD
                     try:
                         date_str = ' '.join(match_time.split(' - ')[0].split()[:3])
                         parsed_date = dt.strptime(date_str, '%B %d, %Y')
@@ -899,7 +936,6 @@ def setup_routes(app):
                     except (IndexError, ValueError):
                         match_date = "Unknown Date"
 
-                    # Skip matches that don't match the filter date, if provided
                     if filter_date and match_date != filter_date:
                         continue
 
@@ -914,12 +950,11 @@ def setup_routes(app):
                         },
                         "MatchTime": match_time,
                         "Score": score,
-                        "_sort_time": parse_match_time(match_time)  # For sorting
+                        "_sort_time": parse_match_time(match_time)
                     }
 
                     matches_by_day[match_date][group_name].append(match_info)
 
-            # Convert defaultdict to regular dict, sort groups alphabetically, and sort matches by time
             formatted_data = {}
             date_groups = []
             for date in matches_by_day.keys():
@@ -927,12 +962,10 @@ def setup_routes(app):
                     parsed_date = dt.strptime(date, '%Y-%m-%d') if date != "Unknown Date" else dt.max
                     groups = {}
                     for group in sorted(matches_by_day[date].keys()):
-                        # Sort matches by time within each group
                         sorted_matches = sorted(
                             matches_by_day[date][group],
                             key=lambda x: x['_sort_time']
                         )
-                        # Remove _sort_time from output
                         groups[group] = [{k: v for k, v in match.items() if k != '_sort_time'} for match in sorted_matches]
                     date_groups.append((parsed_date, date, groups))
                 except ValueError:
@@ -947,9 +980,7 @@ def setup_routes(app):
                         for group in sorted(matches_by_day[date].keys())
                     }))
 
-            # Sort by parsed date
             date_groups.sort(key=lambda x: x[0])
-            # Build final formatted data
             for _, date_str, groups in date_groups:
                 formatted_data[date_str] = groups
 
@@ -1008,26 +1039,18 @@ def setup_routes(app):
             logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
             return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
 
-        # Sanitize game slug to prevent injection
         game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
 
         try:
-            # Define the URL and headers for scraping
             url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36'
             }
-
-            # Fetch the webpage
             logger.debug(f"Fetching data from {url}")
             response = requests.get(url, headers=headers)
-            response.raise_for_status()  # Raise an exception for bad status codes
-
-            # Parse the HTML
+            response.raise_for_status()
             soup = BeautifulSoup(response.text, 'html.parser')
             matches_by_group = defaultdict(list)
-
-            # Extract group data
             group_boxes = soup.select('div.template-box')
             for group in group_boxes:
                 group_name_tag = group.select_one('.brkts-matchlist-title')
@@ -1056,7 +1079,6 @@ def setup_routes(app):
                     score_tag = match.select_one('.brkts-matchlist-score')
                     score = score_tag.text.strip() if score_tag else "N/A"
 
-                    # Extract date from MatchTime and reformat to YYYY-MM-DD
                     try:
                         date_str = ' '.join(match_time.split(' - ')[0].split()[:3])
                         parsed_date = dt.strptime(date_str, '%B %d, %Y')
@@ -1064,7 +1086,6 @@ def setup_routes(app):
                     except (IndexError, ValueError):
                         match_date = "Unknown Date"
 
-                    # Only include matches for the specified date
                     if match_date != filter_date:
                         continue
 
@@ -1079,12 +1100,11 @@ def setup_routes(app):
                         },
                         "MatchTime": match_time,
                         "Score": score,
-                        "_sort_time": parse_match_time(match_time)  # For sorting
+                        "_sort_time": parse_match_time(match_time)
                     }
 
                     matches_by_group[group_name].append(match_info)
 
-            # Sort groups alphabetically and matches by time
             formatted_data = {}
             for group in sorted(matches_by_group.keys()):
                 sorted_matches = sorted(
@@ -1114,14 +1134,22 @@ def setup_routes(app):
         """
         Get Esports World Cup 2025 teams data
         ---
+        parameters:
+          - name: live
+            in: query
+            type: boolean
+            required: false
+            description: Fetch live data from Liquipedia if true, otherwise use cached data
         responses:
           200:
             description: Successfully retrieved teams data
           500:
             description: Server error while fetching teams data
         """
+        live = request.args.get('live', 'false').lower() == 'true'
+        
         try:
-            teams_data = get_teams_ewc()
+            teams_data = get_teams_ewc(live=live)
             if not teams_data:
                 logger.warning("No teams data retrieved")
                 return jsonify({
@@ -1129,7 +1157,7 @@ def setup_routes(app):
                     "data": []
                 }), 200
 
-            logger.debug("Successfully retrieved EWC teams data")
+            logger.debug(f"Successfully retrieved EWC teams data {'from Liquipedia' if live else 'from database'}")
             return jsonify({
                 "message": "Teams data retrieved successfully",
                 "data": teams_data
@@ -1144,14 +1172,22 @@ def setup_routes(app):
         """
         Get Esports World Cup 2025 events data
         ---
+        parameters:
+          - name: live
+            in: query
+            type: boolean
+            required: false
+            description: Fetch live data from Liquipedia if true, otherwise use cached data
         responses:
           200:
             description: Successfully retrieved events data
           500:
             description: Server error while fetching events data
         """
+        live = request.args.get('live', 'false').lower() == 'true'
+        
         try:
-            events_data = get_events_ewc()
+            events_data = get_events_ewc(live=live)
             if not events_data:
                 logger.warning("No events data retrieved")
                 return jsonify({
@@ -1159,7 +1195,7 @@ def setup_routes(app):
                     "data": []
                 }), 200
 
-            logger.debug("Successfully retrieved EWC events data")
+            logger.debug(f"Successfully retrieved EWC events data {'from Liquipedia' if live else 'from database'}")
             return jsonify({
                 "message": "Events data retrieved successfully",
                 "data": events_data
@@ -1175,13 +1211,10 @@ def create_app():
     Swagger(app)
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     
-    # Configure upload folder
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
-    # Initialize database
     init_db()
     
-    # Setup existing routes
     @app.route('/')
     def home():
         return jsonify({"message": "Welcome to Liquipedia Scraper API"})
@@ -1210,7 +1243,6 @@ def create_app():
         result = get_matches_by_status(game_slug, force=force)
         return jsonify(result)
     
-    # Setup news and other routes
     setup_routes(app)
     
     return app
