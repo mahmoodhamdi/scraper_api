@@ -4,6 +4,7 @@ import os
 import logging
 import shutil
 import requests
+import json
 from bs4 import BeautifulSoup
 from datetime import datetime, time
 from flask import Flask, jsonify, request
@@ -313,6 +314,86 @@ def get_events_ewc(live=False):
     except Exception as e:
         logger.error(f"Error processing events data: {str(e)}")
         return []
+
+def get_group_stage_url(main_link, soup=None):
+    """Helper function to get group stage URL from main link"""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    }
+    BASE_URL = "https://liquipedia.net"
+    
+    if not soup:
+        try:
+            response = requests.get(main_link, headers=headers)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.text, 'html.parser')
+        except requests.RequestException as e:
+            logger.error(f"Error fetching main link {main_link}: {str(e)}")
+            return main_link.rstrip('/') + '/Group_Stage'
+
+    detailed_link = soup.find('a', string=lambda x: x and 'click HERE' in x)
+    if detailed_link:
+        full_url = BASE_URL + detailed_link['href']
+        if main_link.split('/')[2] in full_url:
+            return full_url
+
+    return main_link.rstrip('/') + '/Group_Stage'
+
+def scrape_group_stage(game_name, link):
+    """Scrape group stage matches for a given game"""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    }
+    BASE_URL = "https://liquipedia.net"
+    
+    url = get_group_stage_url(link)
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        group_boxes = soup.select('div.template-box')
+
+        if not group_boxes:
+            return {"message": "Matches have not been added yet."}
+
+        data = {}
+        for group in group_boxes:
+            group_name_tag = group.select_one('.brkts-matchlist-title')
+            group_name = group_name_tag.text.strip() if group_name_tag else 'Unknown Group'
+            matches = []
+
+            for match in group.select('.brkts-matchlist-match'):
+                teams = match.select('.brkts-matchlist-opponent')
+                if len(teams) == 2:
+                    team1 = teams[0].get('aria-label', 'N/A')
+                    logo1 = BASE_URL + teams[0].select_one('img')['src'] if teams[0].select_one('img') else 'N/A'
+                    team2 = teams[1].get('aria-label', 'N/A')
+                    logo2 = BASE_URL + teams[1].select_one('img')['src'] if teams[1].select_one('img') else 'N/A'
+                else:
+                    team1 = team2 = logo1 = logo2 = 'N/A'
+
+                match_time = match.select_one('span.timer-object')
+                time_text = match_time.text.strip() if match_time else 'N/A'
+
+                score_tag = match.select_one('.brkts-matchlist-score')
+                score = score_tag.text.strip() if score_tag else 'N/A'
+
+                matches.append({
+                    "Team1": {"Name": team1, "Logo": logo1},
+                    "Team2": {"Name": team2, "Logo": logo2},
+                    "MatchTime": time_text,
+                    "Score": score
+                })
+
+            data[group_name] = matches
+
+        return data
+    except requests.RequestException as e:
+        logger.error(f"Error fetching group stage data for {game_name}: {str(e)}")
+        return {"message": f"Failed to fetch data: {str(e)}"}
+    except Exception as e:
+        logger.error(f"Error processing group stage data for {game_name}: {str(e)}")
+        return {"message": f"Server error: {str(e)}"}
 
 def setup_routes(app):
     """Setup API routes"""
@@ -1203,6 +1284,351 @@ def setup_routes(app):
 
         except Exception as e:
             logger.error(f"Server error while processing events data: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+    @app.route('/api/ewc_all_matches', methods=['GET'])
+    def get_ewc_all_matches():
+        """
+        Get all Esports World Cup 2025 match data for all games with pagination and filtering
+        ---
+        parameters:
+          - name: live
+            in: query
+            type: boolean
+            required: false
+            description: Fetch live data from Liquipedia if true, otherwise use cached JSON data
+          - name: page
+            in: query
+            type: integer
+            default: 1
+            description: Page number for pagination
+          - name: per_page
+            in: query
+            type: integer
+            default: 10
+            description: Number of matches per page per group
+          - name: game
+            in: query
+            type: string
+            required: false
+            description: Filter by game name (e.g., 'Dota 2')
+          - name: group
+            in: query
+            type: string
+            required: false
+            description: Filter by group name (e.g., 'Group A')
+          - name: date
+            in: query
+            type: string
+            required: false
+            description: Filter by date (YYYY-MM-DD, e.g., '2025-07-08')
+        responses:
+          200:
+            description: Successfully retrieved all match data
+          400:
+            description: Invalid date format
+          500:
+            description: Server error while fetching match data
+        """
+        live = request.args.get('live', 'false').lower() == 'true'
+        page = max(1, request.args.get('page', 1, type=int))
+        per_page = max(1, min(100, request.args.get('per_page', 10, type=int)))
+        filter_game = request.args.get('game', '').strip()
+        filter_group = request.args.get('group', '').strip()
+        filter_date = request.args.get('date', '').strip()
+
+        if filter_date and not is_valid_date(filter_date):
+            logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
+            return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
+
+        try:
+            if not live:
+                # Try to load from cached JSON file
+                try:
+                    with open('all_matches_EWC.json', 'r', encoding='utf-8') as f:
+                        all_matches = json.load(f)
+                    logger.debug("Successfully retrieved all EWC match data from cached JSON")
+                except FileNotFoundError:
+                    logger.warning("Cached all_matches_EWC.json not found")
+                    all_matches = None
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error decoding all_matches_EWC.json: {str(e)}")
+                    return jsonify({"error": f"Error decoding cached data: {str(e)}"}), 500
+            else:
+                all_matches = None
+
+            # Fetch events data (from JSON or Liquipedia)
+            try:
+                with open('events_ewc.json', 'r', encoding='utf-8') as f:
+                    games = json.load(f)
+                logger.debug("Retrieved events data from events_ewc.json")
+            except FileNotFoundError:
+                logger.warning("events_ewc.json not found, fetching events from Liquipedia")
+                games = get_events_ewc(live=True)
+                if not games:
+                    logger.error("No events data available from Liquipedia")
+                    return jsonify({"error": "No events data available"}), 500
+                # Save fetched events to JSON file for future caching
+                try:
+                    with open('events_ewc.json', 'w', encoding='utf-8') as f:
+                        json.dump(games, f, ensure_ascii=False, indent=2)
+                    logger.debug("Saved events data to events_ewc.json")
+                except Exception as e:
+                    logger.error(f"Error saving events_ewc.json: {str(e)}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Error decoding events_ewc.json: {str(e)}")
+                return jsonify({"error": f"Error decoding events data: {str(e)}"}), 500
+
+            if all_matches is None:
+                all_matches = {}
+                failed_games = []
+                for game in games:
+                    game_name = game['name']
+                    game_link = game['link']
+                    if filter_game and game_name.lower() != filter_game.lower():
+                        continue
+                    logger.debug(f"Fetching matches for: {game_name}")
+                    match_data = scrape_group_stage(game_name, game_link)
+                    if isinstance(match_data, dict) and "message" in match_data and "404 Client Error" in match_data["message"]:
+                        failed_games.append(game_name)
+                        continue
+                    all_matches[game_name] = match_data
+
+                # Save to JSON file for caching
+                try:
+                    with open('all_matches_EWC.json', 'w', encoding='utf-8') as f:
+                        json.dump(all_matches, f, ensure_ascii=False, indent=2)
+                    logger.debug("Saved all matches to all_matches_EWC.json")
+                except Exception as e:
+                    logger.error(f"Error saving all_matches_EWC.json: {str(e)}")
+            else:
+                failed_games = []
+                # Filter out 404 errors from cached data
+                games_to_remove = []
+                for game_name, match_data in all_matches.items():
+                    if isinstance(match_data, dict) and "message" in match_data and "404 Client Error" in match_data["message"]:
+                        failed_games.append(game_name)
+                        games_to_remove.append(game_name)
+                for game_name in games_to_remove:
+                    del all_matches[game_name]
+
+            # Apply filters and pagination
+            filtered_matches = {}
+            total_matches = 0
+            for game_name, game_data in all_matches.items():
+                if filter_game and game_name.lower() != filter_game.lower():
+                    continue
+                if isinstance(game_data, dict) and "message" in game_data:
+                    filtered_matches[game_name] = game_data
+                    continue
+
+                filtered_game_data = {}
+                for group_name, matches in game_data.items():
+                    if filter_group and group_name.lower() != filter_group.lower():
+                        continue
+                    filtered_matches_list = []
+                    for match in matches:
+                        match_time = match.get('MatchTime', 'N/A')
+                        try:
+                            date_str = ' '.join(match_time.split(' - ')[0].split()[:3]) if ' - ' in match_time else match_time
+                            parsed_date = dt.strptime(date_str, '%B %d, %Y')
+                            match_date = parsed_date.strftime('%Y-%m-%d')
+                        except (IndexError, ValueError):
+                            match_date = "Unknown Date"
+
+                        if filter_date and match_date != filter_date:
+                            continue
+
+                        filtered_matches_list.append(match)
+
+                    # Apply pagination
+                    start_idx = (page - 1) * per_page
+                    end_idx = start_idx + per_page
+                    total_matches += len(filtered_matches_list)
+                    paginated_matches = filtered_matches_list[start_idx:end_idx]
+                    if paginated_matches:
+                        filtered_game_data[group_name] = paginated_matches
+
+                if filtered_game_data:
+                    filtered_matches[game_name] = filtered_game_data
+
+            # Prepare response
+            response = {
+                "message": "All match data retrieved successfully",
+                "data": filtered_matches,
+                "pagination": {
+                    "page": page,
+                    "per_page": per_page,
+                    "total": total_matches,
+                    "pages": (total_matches + per_page - 1) // per_page
+                },
+                "failed_games": failed_games
+            }
+
+            logger.debug("Successfully retrieved all EWC match data with filters and pagination")
+            return jsonify(response)
+
+        except Exception as e:
+            logger.error(f"Server error while processing all match data: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+    @app.route('/api/ewc_all_matches_by_day', methods=['POST'])
+    def get_ewc_all_matches_by_day():
+        """
+        Get all Esports World Cup 2025 match data for all games, grouped by day and sorted by game, group, and time
+        ---
+        consumes:
+          - application/json
+        parameters:
+          - name: date
+            in: body
+            type: string
+            required: false
+            description: Filter matches by specific date (YYYY-MM-DD, e.g., '2025-07-08')
+        responses:
+          200:
+            description: Successfully retrieved all match data grouped by day
+          400:
+            description: Invalid date format
+          500:
+            description: Server error while fetching match data
+        """
+        data = request.get_json() or {}
+        filter_date = data.get('date')
+
+        if filter_date and not is_valid_date(filter_date):
+            logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
+            return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
+
+        try:
+            # Try to load from cached JSON file
+            try:
+                with open('all_matches_EWC.json', 'r', encoding='utf-8') as f:
+                    all_matches = json.load(f)
+                logger.debug("Retrieved all matches from all_matches_EWC.json")
+            except FileNotFoundError:
+                logger.warning("Cached all_matches_EWC.json not found, fetching live data")
+                try:
+                    with open('events_ewc.json', 'r', encoding='utf-8') as f:
+                        games = json.load(f)
+                    logger.debug("Retrieved events data from events_ewc.json")
+                except FileNotFoundError:
+                    logger.warning("events_ewc.json not found, fetching events from Liquipedia")
+                    games = get_events_ewc(live=True)
+                    if not games:
+                        logger.error("No events data available from Liquipedia")
+                        return jsonify({"error": "No events data available"}), 500
+                    # Save fetched events to JSON file for future caching
+                    try:
+                        with open('events_ewc.json', 'w', encoding='utf-8') as f:
+                            json.dump(games, f, ensure_ascii=False, indent=2)
+                        logger.debug("Saved events data to events_ewc.json")
+                    except Exception as e:
+                        logger.error(f"Error saving events_ewc.json: {str(e)}")
+                except json.JSONDecodeError as e:
+                    logger.error(f"Error decoding events_ewc.json: {str(e)}")
+                    return jsonify({"error": f"Error decoding events data: {str(e)}"}), 500
+
+                all_matches = {}
+                for game in games:
+                    game_name = game['name']
+                    game_link = game['link']
+                    logger.debug(f"Fetching matches for: {game_name}")
+                    all_matches[game_name] = scrape_group_stage(game_name, game_link)
+                
+                # Save to JSON file for caching
+                try:
+                    with open('all_matches_EWC.json', 'w', encoding='utf-8') as f:
+                        json.dump(all_matches, f, ensure_ascii=False, indent=2)
+                    logger.debug("Saved all matches to all_matches_EWC.json")
+                except Exception as e:
+                    logger.error(f"Error saving all_matches_EWC.json: {str(e)}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Error decoding all_matches_EWC.json: {str(e)}")
+                return jsonify({"error": f"Error decoding cached data: {str(e)}"}), 500
+
+            matches_by_day = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+            for game_name, game_data in all_matches.items():
+                if isinstance(game_data, dict) and "message" in game_data:
+                    matches_by_day["Unknown Date"][game_name]["Unknown Group"] = game_data
+                    continue
+
+                for group_name, matches in game_data.items():
+                    for match in matches:
+                        match_time = match.get('MatchTime', 'N/A')
+                        try:
+                            date_str = ' '.join(match_time.split(' - ')[0].split()[:3]) if ' - ' in match_time else match_time
+                            parsed_date = dt.strptime(date_str, '%B %d, %Y')
+                            match_date = parsed_date.strftime('%Y-%m-%d')
+                        except (IndexError, ValueError):
+                            match_date = "Unknown Date"
+
+                        if filter_date and match_date != filter_date:
+                            continue
+
+                        match_info = {
+                            "Team1": match.get("Team1", {"Name": "N/A", "Logo": "N/A"}),
+                            "Team2": match.get("Team2", {"Name": "N/A", "Logo": "N/A"}),
+                            "MatchTime": match_time,
+                            "Score": match.get("Score", "N/A"),
+                            "_sort_time": parse_match_time(match_time)
+                        }
+
+                        matches_by_day[match_date][game_name][group_name].append(match_info)
+
+            formatted_data = {}
+            date_groups = []
+            for date in matches_by_day.keys():
+                try:
+                    parsed_date = dt.strptime(date, '%Y-%m-%d') if date != "Unknown Date" else dt.max
+                    games = {}
+                    for game_name in sorted(matches_by_day[date].keys()):
+                        groups = {}
+                        for group_name in sorted(matches_by_day[date][game_name].keys()):
+                            if isinstance(matches_by_day[date][game_name][group_name], dict):
+                                groups[group_name] = matches_by_day[date][game_name][group_name]
+                            else:
+                                sorted_matches = sorted(
+                                    matches_by_day[date][game_name][group_name],
+                                    key=lambda x: x['_sort_time']
+                                )
+                                groups[group_name] = [
+                                    {k: v for k, v in match.items() if k != '_sort_time'}
+                                    for match in sorted_matches
+                                ]
+                        games[game_name] = groups
+                    date_groups.append((parsed_date, date, games))
+                except ValueError:
+                    games = {}
+                    for game_name in sorted(matches_by_day[date].keys()):
+                        groups = {}
+                        for group_name in sorted(matches_by_day[date][game_name].keys()):
+                            if isinstance(matches_by_day[date][game_name][group_name], dict):
+                                groups[group_name] = matches_by_day[date][game_name][group_name]
+                            else:
+                                sorted_matches = sorted(
+                                    matches_by_day[date][game_name][group_name],
+                                    key=lambda x: x['_sort_time']
+                                )
+                                groups[group_name] = [
+                                    {k: v for k, v in match.items() if k != '_sort_time'}
+                                    for match in sorted_matches
+                                ]
+                        games[game_name] = groups
+                    date_groups.append((dt.max, date, games))
+
+            date_groups.sort(key=lambda x: x[0])
+            for _, date_str, games in date_groups:
+                formatted_data[date_str] = games
+
+            logger.debug(f"Successfully retrieved all EWC match data by day{' on ' + filter_date if filter_date else ''}")
+            return jsonify({
+                "message": f"All match data retrieved successfully{' on ' + filter_date if filter_date else ''}",
+                "data": formatted_data
+            })
+
+        except Exception as e:
+            logger.error(f"Server error while processing all match data by day: {str(e)}")
             return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 def create_app():

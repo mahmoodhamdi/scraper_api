@@ -1,0 +1,815 @@
+{
+  "Dota 2": {
+    "Unknown Group": [],
+    "Group A": [
+      {
+        "Team1": {
+          "Name": "Team Spirit",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/66/Team_Spirit_2022_lightmode.png/43px-Team_Spirit_2022_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Xtreme Gaming",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/72/Xtreme_Gaming_%28China%29_allmode.png/50px-Xtreme_Gaming_%28China%29_allmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 12:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Talon Esports",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/7c/Talon_Esports_2019_allmode.png/66px-Talon_Esports_2019_allmode.png"
+        },
+        "Team2": {
+          "Name": "Natus Vincere",
+          "Logo": "https://liquipedia.net/commons/images/thumb/3/3f/Natus_Vincere_2021_lightmode.png/57px-Natus_Vincere_2021_lightmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 12:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Team Spirit",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/66/Team_Spirit_2022_lightmode.png/43px-Team_Spirit_2022_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Talon Esports",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/7c/Talon_Esports_2019_allmode.png/66px-Talon_Esports_2019_allmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 12:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Xtreme Gaming",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/72/Xtreme_Gaming_%28China%29_allmode.png/50px-Xtreme_Gaming_%28China%29_allmode.png"
+        },
+        "Team2": {
+          "Name": "Natus Vincere",
+          "Logo": "https://liquipedia.net/commons/images/thumb/3/3f/Natus_Vincere_2021_lightmode.png/57px-Natus_Vincere_2021_lightmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 12:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Talon Esports",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/7c/Talon_Esports_2019_allmode.png/66px-Talon_Esports_2019_allmode.png"
+        },
+        "Team2": {
+          "Name": "Xtreme Gaming",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/72/Xtreme_Gaming_%28China%29_allmode.png/50px-Xtreme_Gaming_%28China%29_allmode.png"
+        },
+        "MatchTime": "July 10, 2025 - 12:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Team Spirit",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/66/Team_Spirit_2022_lightmode.png/43px-Team_Spirit_2022_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Natus Vincere",
+          "Logo": "https://liquipedia.net/commons/images/thumb/3/3f/Natus_Vincere_2021_lightmode.png/57px-Natus_Vincere_2021_lightmode.png"
+        },
+        "MatchTime": "July 10, 2025 - 12:00 AST",
+        "Score": ""
+      }
+    ],
+    "Group B": [
+      {
+        "Team1": {
+          "Name": "BetBoom Team",
+          "Logo": "https://liquipedia.net/commons/images/thumb/5/5b/BetBoom_Team_2024_allmode.png/56px-BetBoom_Team_2024_allmode.png"
+        },
+        "Team2": {
+          "Name": "Gaimin Gladiators",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/78/Gladiators_2022_allmode.png/30px-Gladiators_2022_allmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 14:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Team Falcons",
+          "Logo": "https://liquipedia.net/commons/images/thumb/8/83/Team_Falcons_2022_allmode.png/41px-Team_Falcons_2022_allmode.png"
+        },
+        "Team2": {
+          "Name": "Execration",
+          "Logo": "https://liquipedia.net/commons/images/thumb/4/44/Execration_2024_allmode.png/42px-Execration_2024_allmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 14:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "BetBoom Team",
+          "Logo": "https://liquipedia.net/commons/images/thumb/5/5b/BetBoom_Team_2024_allmode.png/56px-BetBoom_Team_2024_allmode.png"
+        },
+        "Team2": {
+          "Name": "Team Falcons",
+          "Logo": "https://liquipedia.net/commons/images/thumb/8/83/Team_Falcons_2022_allmode.png/41px-Team_Falcons_2022_allmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 14:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Gaimin Gladiators",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/78/Gladiators_2022_allmode.png/30px-Gladiators_2022_allmode.png"
+        },
+        "Team2": {
+          "Name": "Execration",
+          "Logo": "https://liquipedia.net/commons/images/thumb/4/44/Execration_2024_allmode.png/42px-Execration_2024_allmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 14:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Team Falcons",
+          "Logo": "https://liquipedia.net/commons/images/thumb/8/83/Team_Falcons_2022_allmode.png/41px-Team_Falcons_2022_allmode.png"
+        },
+        "Team2": {
+          "Name": "Gaimin Gladiators",
+          "Logo": "https://liquipedia.net/commons/images/thumb/7/78/Gladiators_2022_allmode.png/30px-Gladiators_2022_allmode.png"
+        },
+        "MatchTime": "July 10, 2025 - 14:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "BetBoom Team",
+          "Logo": "https://liquipedia.net/commons/images/thumb/5/5b/BetBoom_Team_2024_allmode.png/56px-BetBoom_Team_2024_allmode.png"
+        },
+        "Team2": {
+          "Name": "Execration",
+          "Logo": "https://liquipedia.net/commons/images/thumb/4/44/Execration_2024_allmode.png/42px-Execration_2024_allmode.png"
+        },
+        "MatchTime": "July 10, 2025 - 14:30 AST",
+        "Score": ""
+      }
+    ],
+    "Group C": [
+      {
+        "Team1": {
+          "Name": "Tundra Esports",
+          "Logo": "https://liquipedia.net/commons/images/thumb/1/13/Tundra_Esports_2020_lightmode.png/58px-Tundra_Esports_2020_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Virtus.pro",
+          "Logo": "https://liquipedia.net/commons/images/thumb/c/c0/Virtus.pro_2019_allmode.png/51px-Virtus.pro_2019_allmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 17:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Aurora Gaming",
+          "Logo": "https://liquipedia.net/commons/images/thumb/1/1c/Aurora_Gaming_2025_allmode.png/50px-Aurora_Gaming_2025_allmode.png"
+        },
+        "Team2": {
+          "Name": "Cyber Goose",
+          "Logo": "https://liquipedia.net/commons/images/thumb/f/ff/Cyber_Goose_allmode.png/84px-Cyber_Goose_allmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 17:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Tundra Esports",
+          "Logo": "https://liquipedia.net/commons/images/thumb/1/13/Tundra_Esports_2020_lightmode.png/58px-Tundra_Esports_2020_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Aurora Gaming",
+          "Logo": "https://liquipedia.net/commons/images/thumb/1/1c/Aurora_Gaming_2025_allmode.png/50px-Aurora_Gaming_2025_allmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 17:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Virtus.pro",
+          "Logo": "https://liquipedia.net/commons/images/thumb/c/c0/Virtus.pro_2019_allmode.png/51px-Virtus.pro_2019_allmode.png"
+        },
+        "Team2": {
+          "Name": "Cyber Goose",
+          "Logo": "https://liquipedia.net/commons/images/thumb/f/ff/Cyber_Goose_allmode.png/84px-Cyber_Goose_allmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 17:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Aurora Gaming",
+          "Logo": "https://liquipedia.net/commons/images/thumb/1/1c/Aurora_Gaming_2025_allmode.png/50px-Aurora_Gaming_2025_allmode.png"
+        },
+        "Team2": {
+          "Name": "Virtus.pro",
+          "Logo": "https://liquipedia.net/commons/images/thumb/c/c0/Virtus.pro_2019_allmode.png/51px-Virtus.pro_2019_allmode.png"
+        },
+        "MatchTime": "July 11, 2025 - 12:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Tundra Esports",
+          "Logo": "https://liquipedia.net/commons/images/thumb/1/13/Tundra_Esports_2020_lightmode.png/58px-Tundra_Esports_2020_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Cyber Goose",
+          "Logo": "https://liquipedia.net/commons/images/thumb/f/ff/Cyber_Goose_allmode.png/84px-Cyber_Goose_allmode.png"
+        },
+        "MatchTime": "July 11, 2025 - 12:00 AST",
+        "Score": ""
+      }
+    ],
+    "Group D": [
+      {
+        "Team1": {
+          "Name": "PARIVISION",
+          "Logo": "https://liquipedia.net/commons/images/thumb/9/9d/PARIVISION_allmode.png/56px-PARIVISION_allmode.png"
+        },
+        "Team2": {
+          "Name": "HEROIC",
+          "Logo": "https://liquipedia.net/commons/images/thumb/0/03/Heroic_2023_allmode.png/57px-Heroic_2023_allmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 19:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Team Liquid",
+          "Logo": "https://liquipedia.net/commons/images/thumb/0/01/Team_Liquid_2024_lightmode.png/44px-Team_Liquid_2024_lightmode.png"
+        },
+        "Team2": {
+          "Name": "Shopify Rebellion",
+          "Logo": "https://liquipedia.net/commons/images/thumb/a/a4/Shopify_Rebellion_2021_lightmode.png/32px-Shopify_Rebellion_2021_lightmode.png"
+        },
+        "MatchTime": "July 8, 2025 - 19:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "PARIVISION",
+          "Logo": "https://liquipedia.net/commons/images/thumb/9/9d/PARIVISION_allmode.png/56px-PARIVISION_allmode.png"
+        },
+        "Team2": {
+          "Name": "Team Liquid",
+          "Logo": "https://liquipedia.net/commons/images/thumb/0/01/Team_Liquid_2024_lightmode.png/44px-Team_Liquid_2024_lightmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 19:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "HEROIC",
+          "Logo": "https://liquipedia.net/commons/images/thumb/0/03/Heroic_2023_allmode.png/57px-Heroic_2023_allmode.png"
+        },
+        "Team2": {
+          "Name": "Shopify Rebellion",
+          "Logo": "https://liquipedia.net/commons/images/thumb/a/a4/Shopify_Rebellion_2021_lightmode.png/32px-Shopify_Rebellion_2021_lightmode.png"
+        },
+        "MatchTime": "July 9, 2025 - 19:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "Team Liquid",
+          "Logo": "https://liquipedia.net/commons/images/thumb/0/01/Team_Liquid_2024_lightmode.png/44px-Team_Liquid_2024_lightmode.png"
+        },
+        "Team2": {
+          "Name": "HEROIC",
+          "Logo": "https://liquipedia.net/commons/images/thumb/0/03/Heroic_2023_allmode.png/57px-Heroic_2023_allmode.png"
+        },
+        "MatchTime": "July 11, 2025 - 14:30 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "PARIVISION",
+          "Logo": "https://liquipedia.net/commons/images/thumb/9/9d/PARIVISION_allmode.png/56px-PARIVISION_allmode.png"
+        },
+        "Team2": {
+          "Name": "Shopify Rebellion",
+          "Logo": "https://liquipedia.net/commons/images/thumb/a/a4/Shopify_Rebellion_2021_lightmode.png/32px-Shopify_Rebellion_2021_lightmode.png"
+        },
+        "MatchTime": "July 11, 2025 - 14:30 AST",
+        "Score": ""
+      }
+    ]
+  },
+  "Honor of Kings": {
+    "Match List": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "July 26, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "July 26, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "July 26, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "July 26, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "July 26, 2025",
+        "Score": ""
+      }
+    ]
+  },
+  "Mobile Legends": {
+    "Match List": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "August 2, 2025",
+        "Score": ""
+      }
+    ]
+  },
+  "Overwatch": {
+    "Match List": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "N/A",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "N/A",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "N/A",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "N/A",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "N/A",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "N/A"
+        },
+        "MatchTime": "N/A",
+        "Score": ""
+      }
+    ]
+  },
+  "Teamfight Tactics": {
+    "Group A Matches": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 13, 2025 - 14:00 AST",
+        "Score": ""
+      }
+    ],
+    "Group B Matches": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 13, 2025 - 14:00 AST",
+        "Score": ""
+      }
+    ],
+    "Group C Matches": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 13, 2025 - 14:00 AST",
+        "Score": ""
+      }
+    ],
+    "Group D Matches": [
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 11, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 12, 2025 - 14:00 AST",
+        "Score": ""
+      },
+      {
+        "Team1": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "Team2": {
+          "Name": "N/A",
+          "Logo": "https://liquipedia.net/commons/images/thumb/6/6a/Filler_600px.png/50px-Filler_600px.png"
+        },
+        "MatchTime": "August 13, 2025 - 14:00 AST",
+        "Score": ""
+      }
+    ]
+  }
+}
