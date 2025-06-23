@@ -102,7 +102,15 @@ def init_db():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-
+    # Create games table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS games (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            game_name TEXT NOT NULL,
+            logo_url TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     # Create ewc_info table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS ewc_info (
@@ -548,6 +556,87 @@ def scrape_group_stage(game_name, link):
     except Exception as e:
         logger.error(f"Error processing group stage data for {game_name}: {str(e)}")
         return {"message": f"Server error: {str(e)}"}
+
+
+def get_ewc_games(live=False):
+    """Fetch Esports World Cup 2025 games from Liquipedia or database"""
+    if not live:
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT game_name, logo_url FROM games')
+            games_data = [{'game_name': row[0], 'logo_url': row[1]} for row in cursor.fetchall()]
+            conn.close()
+            
+            if games_data:
+                logger.debug("Retrieved games data from database")
+                return games_data
+        except sqlite3.Error as e:
+            logger.error(f"Database error while fetching games: {str(e)}")
+        
+    # Fetch from Liquipedia if live=True or no data in database
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    }
+    BASE_URL = "https://liquipedia.net"
+    url = 'https://liquipedia.net/esports/Esports_World_Cup/2025'
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        games_data = []
+        target_table = None
+        for th in soup.select('th[colspan="8"]'):
+            if 'List of Tournaments' in th.text:
+                target_table = th.find_parent('table')
+                break
+
+        if not target_table:
+            logger.error("Could not find the games table")
+            return []
+
+        rows = target_table.select('tr')[1:]
+        for row in rows:
+            cols = row.select('td')
+            if len(cols) >= 4:
+                game_name = cols[0].text.strip()
+                if not game_name:
+                    continue
+                logo_game = cols[0].select_one('img')
+                logo_url = BASE_URL + logo_game['src'] if logo_game else None
+
+                games_data.append({
+                    'game_name': game_name,
+                    'logo_url': logo_url
+                })
+
+        # Store in database
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM games')  # Clear existing games
+            for game in games_data:
+                cursor.execute('''
+                    INSERT INTO games (game_name, logo_url)
+                    VALUES (?, ?)
+                ''', (game['game_name'], game['logo_url']))
+            conn.commit()
+            logger.debug("Stored games data in database")
+        except sqlite3.Error as e:
+            logger.error(f"Database error while storing games: {str(e)}")
+        finally:
+            conn.close()
+
+        return games_data
+    
+    except requests.RequestException as e:
+        logger.error(f"Error fetching games data: {str(e)}")
+        return []
+    except Exception as e:
+        logger.error(f"Error processing games data: {str(e)}")
+        return []
 
 def setup_routes(app):
     """Setup API routes"""
@@ -1849,6 +1938,44 @@ def setup_routes(app):
 
         except Exception as e:
             logger.error(f"Server error while processing all match data by day: {str(e)}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+        
+    @app.route('/api/ewc_games', methods=['GET'])
+    def get_ewc_games_endpoint():
+        """
+        Get Esports World Cup 2025 games data
+        ---
+        parameters:
+          - name: live
+            in: query
+            type: boolean
+            required: false
+            description: Fetch live data from Liquipedia if true, otherwise use cached database data
+        responses:
+          200:
+            description: Successfully retrieved games data
+          500:
+            description: Server error while fetching games data
+        """
+        live = request.args.get('live', 'false').lower() == 'true'
+        
+        try:
+            games_data = get_ewc_games(live=live)
+            if not games_data:
+                logger.warning("No games data retrieved")
+                return jsonify({
+                    "message": "No games data found",
+                    "data": []
+                }), 200
+
+            logger.debug(f"Successfully retrieved EWC games data {'from Liquipedia' if live else 'from database'}")
+            return jsonify({
+                "message": "Games data retrieved successfully",
+                "data": games_data
+            })
+
+        except Exception as e:
+            logger.error(f"Server error while processing games data: {str(e)}")
             return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 def create_app():
