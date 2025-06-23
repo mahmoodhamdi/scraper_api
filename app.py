@@ -30,7 +30,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def init_db():
-    """Initialize the SQLite database with news, teams, and events tables"""
+    """Initialize the SQLite database with news, teams, events, and ewc_info tables"""
     conn = sqlite3.connect('news.db')
     cursor = conn.cursor()
     
@@ -103,6 +103,26 @@ def init_db():
         )
     ''')
 
+    # Create ewc_info table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ewc_info (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            header TEXT,
+            series TEXT,
+            organizers TEXT,
+            location TEXT,
+            prize_pool TEXT,
+            start_date TEXT,
+            end_date TEXT,
+            liquipedia_tier TEXT,
+            logo_light TEXT,
+            logo_dark TEXT,
+            location_logo TEXT,
+            social_links TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -111,7 +131,7 @@ def reset_db_sequence():
     try:
         conn = sqlite3.connect('news.db')
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM sqlite_sequence WHERE name IN ('news', 'teams', 'events')")
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name IN ('news', 'teams', 'events', 'ewc_info')")
         conn.commit()
         logger.debug("Reset SQLite sequence for tables")
     except sqlite3.Error as e:
@@ -168,6 +188,133 @@ def parse_match_datetime(match_time):
             return parsed_datetime
     except (IndexError, ValueError):
         return dt.max
+
+def get_ewc_information(live=False):
+    """Fetch Esports World Cup 2025 information from Liquipedia or database"""
+    if not live:
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM ewc_info ORDER BY updated_at DESC LIMIT 1')
+            row = cursor.fetchone()
+            conn.close()
+            
+            if row:
+                info_data = {
+                    'header': row[1],
+                    'series': row[2],
+                    'organizers': row[3],
+                    'location': row[4],
+                    'prize_pool': row[5],
+                    'start_date': row[6],
+                    'end_date': row[7],
+                    'liquipedia_tier': row[8],
+                    'logo_light': row[9],
+                    'logo_dark': row[10],
+                    'location_logo': row[11],
+                    'social_links': json.loads(row[12]) if row[12] else [],
+                    'updated_at': row[13]
+                }
+                logger.debug("Retrieved EWC info from database")
+                return info_data
+        except sqlite3.Error as e:
+            logger.error(f"Database error while fetching EWC info: {str(e)}")
+    
+    # Fetch from Liquipedia if live=True or no data in database
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+    }
+    BASE_URL = "https://liquipedia.net"
+    URL = "https://liquipedia.net/esports/Esports_World_Cup/2025"
+    
+    try:
+        response = requests.get(URL, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        info_data = soup.select_one('div.fo-nttax-infobox')
+        
+        data = {}
+        
+        if not info_data:
+            logger.error("No info data found on Liquipedia")
+            return {}
+            
+        header = info_data.select_one('div.infobox-header.wiki-backgroundcolor-light')
+        if header:
+            data['header'] = header.text.strip()
+        
+        for information in info_data.select('div.infobox-cell-2.infobox-description'):
+            key = information.text.strip().rstrip(':')
+            value = information.find_next_sibling()
+            if value:
+                data[key.lower().replace(' ', '_')] = value.text.strip()
+        
+        logo_light = info_data.select_one('.infobox-image.lightmode img')
+        if logo_light:
+            data['logo_light'] = BASE_URL + logo_light['src']
+            
+        logo_dark = info_data.select_one('.infobox-image.darkmode img')
+        if logo_dark:
+            data['logo_dark'] = BASE_URL + logo_dark['src']
+        
+        location_logo = info_data.select_one('div.infobox-cell-2.infobox-description:contains("Location") + div span.flag img')
+        if location_logo:
+            data['location_logo'] = BASE_URL + location_logo['src']
+        
+        social_links = []
+        links = info_data.select('div.infobox-center.infobox-icons a.external.text')
+        for link in links:
+            href = link.get('href')
+            icon_class = link.select_one('i')
+            if href and icon_class:
+                icon_type = icon_class['class'][-1].replace('lp-', '')
+                social_links.append({
+                    "platform": icon_type,
+                    "link": href
+                })
+        data['social_links'] = social_links
+        
+        # Store in database
+        try:
+            conn = sqlite3.connect('news.db')
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM ewc_info')  # Clear existing info
+            cursor.execute('''
+                INSERT INTO ewc_info (
+                    header, series, organizers, location, prize_pool, 
+                    start_date, end_date, liquipedia_tier, logo_light, 
+                    logo_dark, location_logo, social_links
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                data.get('header'),
+                data.get('series'),
+                data.get('organizers'),
+                data.get('location'),
+                data.get('prize_pool'),
+                data.get('start_date'),
+                data.get('end_date'),
+                data.get('liquipedia_tier'),
+                data.get('logo_light'),
+                data.get('logo_dark'),
+                data.get('location_logo'),
+                json.dumps(data.get('social_links'))
+            ))
+            conn.commit()
+            logger.debug("Stored EWC info in database")
+        except sqlite3.Error as e:
+            logger.error(f"Database error while storing EWC info: {str(e)}")
+        finally:
+            conn.close()
+        
+        return data
+    
+    except requests.RequestException as e:
+        logger.error(f"Error fetching EWC info from Liquipedia: {str(e)}")
+        return {}
+    except Exception as e:
+        logger.error(f"Error processing EWC info: {str(e)}")
+        return {}
 
 def get_teams_ewc(live=False):
     """Fetch Esports World Cup 2025 teams from Liquipedia or database"""
@@ -788,7 +935,7 @@ def setup_routes(app):
     @app.route('/api/reset_db', methods=['POST'])
     def reset_db():
         """
-        Reset the database by deleting all news, teams, events items, resetting ID sequence, and optionally clearing uploads
+        Reset the database by deleting all news, teams, events, ewc_info items, resetting ID sequence, and optionally clearing uploads
         ---
         consumes:
           - application/json
@@ -814,6 +961,7 @@ def setup_routes(app):
             cursor.execute('DELETE FROM news')
             cursor.execute('DELETE FROM teams')
             cursor.execute('DELETE FROM events')
+            cursor.execute('DELETE FROM ewc_info')
             conn.commit()
             
             reset_db_sequence()
@@ -971,13 +1119,14 @@ def setup_routes(app):
 
         if not game_slug:
             logger.error("Missing 'game' in request body")
-            return jsonify({"error": "Missing 'game' in request body"}), 400
+            return jsonify({"error": "Missing 'game' error"})
+        return jsonify({"error": "Missing 'game' in request body"}), 400
 
         if filter_date and not is_valid_date(filter_date):
             logger.error(f"Invalid date format: {filter_date}. Expected YYYY-MM-DD")
             return jsonify({"error": "Invalid date format. Expected YYYY-MM-DD"}), 400
 
-        game_slug = re.sub(r'[^a-z0-9]', '', game_slug.lower())
+        game_slug = re.sub(r'[^a-z0-0-9]', '', game_slug.lower())
 
         try:
             url = f'https://liquipedia.net/{game_slug}/Esports_World_Cup/2025/Group_Stage'
@@ -991,7 +1140,7 @@ def setup_routes(app):
             matches_by_day = defaultdict(lambda: defaultdict(list))
             group_boxes = soup.select('div.template-box')
             for group in group_boxes:
-                group_name_tag = group.select_one('.brkts-matchlist-title')
+                group_name_tag_name_tag = group.select_one('.brkts-matchlist-title')
                 group_name = group_name_tag.text.strip() if group_name_tag else 'Unknown Group'
 
                 matches_by_day_group = group.select('.brkts-matchlist-match')
@@ -1152,43 +1301,43 @@ def setup_routes(app):
                     if len(teams) == 2:
                         team1_name = teams[0].get('aria-label', 'N/A')
                         logo1_tag = teams[0].select_one('img')
-                        logo1 = f"https://liquipedia.net{logo1_tag['src']}" if logo1_tag else "N/A"
+                        logo1 = f"https://liquipedia.net{logo1_tag['src']}" if logo1_tag else 'N/A'
 
                         team2_name = teams[1].get('aria-label', 'N/A')
                         logo2_tag = teams[1].select_one('img')
-                        logo2 = f"https://liquipedia.net{logo2_tag['src']}" if logo2_tag else "N/A"
+                        logo2 = f"https://liquipedia.net{logo2_tag['src']}" if logo2_tag else 'N/A'
                     else:
-                        team1_name, logo1 = "N/A", "N/A"
-                        team2_name, logo2 = "N/A", "N/A"
+                        team1_name, logo1 = 'N/A', 'N/A'
+                        team2_name, logo2 = 'N/A', 'N/A'
 
                     time_tag = match.select_one('span.timer-object')
-                    match_time = time_tag.text.strip() if time_tag else "N/A"
+                    match_time = time_tag.text.strip() if time_tag else 'N/A'
 
                     score_tag = match.select_one('.brkts-matchlist-score')
-                    score = score_tag.text.strip() if score_tag else "N/A"
+                    score = score_tag.text.strip() if score_tag else 'N/A'
 
                     try:
                         date_str = ' '.join(match_time.split(' - ')[0].split()[:3])
                         parsed_date = dt.strptime(date_str, '%B %d, %Y')
                         match_date = parsed_date.strftime('%Y-%m-%d')
                     except (IndexError, ValueError):
-                        match_date = "Unknown Date"
+                        match_date = 'Unknown Date'
 
                     if match_date != filter_date:
                         continue
 
                     match_info = {
-                        "Team1": {
-                            "Name": team1_name,
-                            "Logo": logo1
+                        'Team1': {
+                            'Name': team1_name,
+                            'Logo': logo1
                         },
-                        "Team2": {
-                            "Name": team2_name,
-                            "Logo": logo2
+                        'Team2': {
+                            'Name': team2_name,
+                            'Logo': logo2
                         },
-                        "MatchTime": match_time,
-                        "Score": score,
-                        "_sort_time": parse_match_datetime(match_time)
+                        'MatchTime': match_time,
+                        'Score': score,
+                        '_sort_time': parse_match_datetime(match_time)
                     }
 
                     matches_by_group[group_name].append(match_info)
@@ -1206,15 +1355,53 @@ def setup_routes(app):
 
             logger.debug(f"Successfully retrieved EWC match data for {game_slug} on {filter_date}")
             return jsonify({
-                "message": f"Match data retrieved successfully for {game_slug} on {filter_date}",
-                "data": formatted_data
+                'message': f'Match data retrieved successfully for {game_slug} on {filter_date}',
+                'data': formatted_data
             })
 
         except requests.RequestException as e:
             logger.error(f"Error fetching data from Liquipedia for {game_slug}: {str(e)}")
-            return jsonify({"error": f"Failed to fetch data: {str(e)}"}), 500
+            return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
         except Exception as e:
             logger.error(f"Server error while processing match data for {game_slug}: {str(e)}")
+            return jsonify({'error': f'Server error: {str(e)}'}), 500
+
+    @app.route('/api/ewc_info', methods=['GET'])
+    def get_ewc_info():
+        """
+        Get Esports World Cup 2025 information
+        ---
+        parameters:
+          - name: live
+            in: query
+            type: boolean
+            required: false
+            description: Fetch live data from Liquipedia if true, otherwise use cached database data
+        responses:
+          200:
+            description: Successfully retrieved EWC information
+          500:
+            description: Server error while fetching EWC information
+        """
+        live = request.args.get('live', 'false').lower() == 'true'
+        
+        try:
+            info_data = get_ewc_information(live=live)
+            if not info_data:
+                logger.warning("No EWC information retrieved")
+                return jsonify({
+                    "message": "No information found",
+                    "data": {}
+                }), 200
+
+            logger.debug(f"Successfully retrieved EWC info {'from Liquipedia' if live else 'from database'}")
+            return jsonify({
+                "message": "EWC information retrieved successfully",
+                "data": info_data
+            })
+
+        except Exception as e:
+            logger.error(f"Server error while processing EWC info: {str(e)}")
             return jsonify({"error": f"Server error: {str(e)}"}), 500
 
     @app.route('/api/ewc_teams', methods=['GET'])
@@ -1312,7 +1499,7 @@ def setup_routes(app):
           - name: per_page
             in: query
             type: integer
-            default: 10
+            default: 100
             description: Number of matches per page
           - name: game
             in: query
@@ -1386,7 +1573,7 @@ def setup_routes(app):
                 logger.error(f"Error decoding events_ewc.json: {str(e)}")
                 return jsonify({"error": f"Error decoding events data: {str(e)}"}), 500
 
-            if all_matches is None:
+            if all_matches:
                 all_matches = {}
                 failed_games = []
                 for game in games:
@@ -1394,12 +1581,17 @@ def setup_routes(app):
                     game_link = game['link']
                     if filter_game and game_name.lower() != filter_game.lower():
                         continue
-                    logger.debug(f"Fetching matches for: {game_name}")
-                    match_data = scrape_group_stage(game_name, game_link)
-                    if isinstance(match_data, dict) and "message" in match_data and "404 Client Error" in match_data["message"]:
+                    try:
+                        logger.debug(f"Fetching matches for {game_name}")
+                        match_data = scrape_group_stage(game_name, game_link)
+                        if isinstance(match_data, dict) and "message" in match_data and "404 Client Error" in match_data["message"]:
+                            failed_games.append(game_name)
+                            continue
+                        all_matches[game_name] = match_data
+                    except Exception as e:
+                        logger.error(f"Error fetching matches for {game_name}: {str(e)}")
                         failed_games.append(game_name)
                         continue
-                    all_matches[game_name] = match_data
 
                 # Save to JSON file for caching
                 try:
